@@ -1,0 +1,19 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Java
+target/
+build/
+.gradle/
+
+# Environment
+.env
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
