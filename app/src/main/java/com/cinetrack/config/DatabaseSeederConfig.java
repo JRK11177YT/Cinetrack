@@ -1,16 +1,17 @@
 package com.cinetrack.config;
 
-import com.cinetrack.model.Genero;
-import com.cinetrack.model.Pelicula;
-import com.cinetrack.service.GeneroService;
-import com.cinetrack.service.PeliculaService;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Optional;
+import com.cinetrack.model.Genero;
+import com.cinetrack.model.Pelicula;
+import com.cinetrack.service.GeneroService;
+import com.cinetrack.service.PeliculaService;
 
 @Configuration
 public class DatabaseSeederConfig {

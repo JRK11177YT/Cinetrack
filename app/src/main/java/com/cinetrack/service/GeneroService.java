@@ -1,12 +1,13 @@
 package com.cinetrack.service;
 
-import com.cinetrack.model.Genero;
-import com.cinetrack.repository.GeneroRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.cinetrack.model.Genero;
+import com.cinetrack.repository.GeneroRepository;
 
 @Service
 public class GeneroService {

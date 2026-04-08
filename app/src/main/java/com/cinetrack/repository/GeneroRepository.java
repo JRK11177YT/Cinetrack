@@ -1,10 +1,11 @@
 package com.cinetrack.repository;
 
-import com.cinetrack.model.Genero;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.cinetrack.model.Genero;
 
 @Repository
 public interface GeneroRepository extends JpaRepository<Genero, Integer> {
