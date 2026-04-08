@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>Registro</title>
+</head>
+<body>
+<div layout:fragment="body">
+    <div class="auth-page">
+        <div class="auth-page__bg"></div>
+
+        <header class="auth-header">
+            <a href="/login" class="navbar__logo" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: #E50914; text-transform: uppercase; text-decoration: none;">
+                CineTrack
+            </a>
+        </header>
+
+        <div class="auth-content">
+            <div class="auth-card animate-fadeInUp">
+                <!-- Steps indicator -->
+                <div class="steps">
+                    <div class="step active"></div>
+                    <div class="step"></div>
+                    <div class="step"></div>
+                </div>
+
+                <h1 class="auth-card__title">Crear Cuenta</h1>
+                <p class="auth-card__subtitle">
+                    Paso 1 de 3: Introduce tu email y contraseña para empezar.
+                </p>
+
+                <div th:if="${error}" class="form-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}">Error</span>
+                </div>
+
+                <form th:action="@{/registro}" method="post">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" class="form-input"
+                               placeholder="tu@email.com" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" name="password" id="password" class="form-input"
+                               placeholder="Mínimo 6 caracteres" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="passwordConfirm">Confirmar Contraseña</label>
+                        <input type="password" name="passwordConfirm" id="passwordConfirm" class="form-input"
+                               placeholder="Repite la contraseña" required minlength="6">
+                    </div>
+
+                    <button type="submit" class="btn btn--accent btn--full btn--lg" style="margin-top: 8px;">
+                        Siguiente <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                    </button>
+
+                    <p class="form-footer" style="margin-top: 24px;">
+                        ¿Ya tienes cuenta?
+                        <a th:href="@{/login}">Inicia sesión</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

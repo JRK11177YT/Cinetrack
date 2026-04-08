@@ -1,9 +1,9 @@
 package com.cinetrack.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cinetrack.model.Usuario;
@@ -13,14 +13,12 @@ import com.cinetrack.repository.UsuarioRepository;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
-    }
-
-    public List<Usuario> obtenerTodos() {
-        return usuarioRepository.findAll();
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Optional<Usuario> obtenerPorId(Integer id) {
@@ -31,12 +29,15 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email);
     }
 
-    public Usuario guardar(Usuario usuario) {
-        // Aquí podríamos añadir lógica para encriptar la contraseña antes de guardar
+    public Usuario registrar(String email, String passwordPlano, String plan) {
+        Usuario usuario = new Usuario();
+        usuario.setEmail(email);
+        usuario.setPassword(passwordEncoder.encode(passwordPlano));
+        usuario.setPlan(plan);
         return usuarioRepository.save(usuario);
     }
 
-    public void eliminar(Integer id) {
-        usuarioRepository.deleteById(id);
+    public Usuario guardar(Usuario usuario) {
+        return usuarioRepository.save(usuario);
     }
 }

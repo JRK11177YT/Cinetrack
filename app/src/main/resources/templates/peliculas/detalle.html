@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/app}"
+      lang="es">
+<head>
+    <title th:text="${pelicula.titulo}">Película</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <!-- ====== DETAIL HERO ====== -->
+    <section class="detail-hero">
+        <div class="detail-hero__bg" style="background-color: #1a1a2e;"></div>
+        <div class="detail-hero__overlay"></div>
+        <div class="detail-content animate-fadeInUp">
+            <h1 class="detail-content__title" th:text="${pelicula.titulo}">Título</h1>
+            <div class="detail-content__meta">
+                <span class="match">98% Para ti</span>
+                <span th:text="${pelicula.anio}">2024</span>
+                <span th:text="${pelicula.duracion} + ' min'">120 min</span>
+                <span class="hero__meta-badge" th:text="${pelicula.genero.nombre}">Género</span>
+            </div>
+            <p class="detail-content__description" th:text="${pelicula.descripcion}">Descripción...</p>
+
+            <div class="detail-content__buttons">
+                <button class="btn btn--play">
+                    <i class="fas fa-play"></i>
+                    <span th:if="${progreso != null && !progreso.completada}">Continuar</span>
+                    <span th:unless="${progreso != null && !progreso.completada}">Reproducir</span>
+                </button>
+
+                <button class="btn btn--icon"
+                        th:classappend="${enMiLista} ? 'active' : ''"
+                        data-milista-toggle
+                        th:data-pelicula-id="${pelicula.id}"
+                        title="Mi Lista">
+                    <i th:class="${enMiLista} ? 'fas fa-check' : 'fas fa-plus'"></i>
+                </button>
+            </div>
+
+            <!-- Progress bar if watching -->
+            <div class="detail-content__progress" th:if="${progreso != null && !progreso.completada}">
+                <div class="detail-content__progress-label">
+                    <span th:text="${progreso.progresoSegundos / 60} + ' min de ' + ${pelicula.duracion} + ' min'">
+                        30 min de 120 min
+                    </span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar__fill"
+                         th:style="'width:' + ${(progreso.progresoSegundos * 100) / (pelicula.duracion * 60)} + '%'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== MOVIE INFO SECTION ====== -->
+    <div class="page-section" style="padding-top: 32px;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 48px; max-width: 1000px;">
+            <div>
+                <h3 style="margin-bottom: 16px;">Sinopsis</h3>
+                <p style="color: var(--text-secondary); line-height: 1.7;" th:text="${pelicula.descripcion}">
+                    Descripción completa de la película.
+                </p>
+            </div>
+            <div>
+                <p style="margin-bottom: 12px;">
+                    <span style="color: var(--text-muted);">Género: </span>
+                    <span th:text="${pelicula.genero.nombre}">Género</span>
+                </p>
+                <p style="margin-bottom: 12px;">
+                    <span style="color: var(--text-muted);">Año: </span>
+                    <span th:text="${pelicula.anio}">2024</span>
+                </p>
+                <p style="margin-bottom: 12px;">
+                    <span style="color: var(--text-muted);">Duración: </span>
+                    <span th:text="${pelicula.duracion} + ' minutos'">120 minutos</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

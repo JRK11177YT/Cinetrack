@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>¿Quién está viendo?</title>
+</head>
+<body>
+<div layout:fragment="body">
+    <div class="profiles-page animate-fadeIn">
+        <h1 class="profiles-page__title animate-fadeInUp">¿Quién está viendo?</h1>
+
+        <div class="profiles-grid">
+            <div th:each="perfil, iter : ${perfiles}" class="animate-fadeInUp"
+                 th:classappend="'delay-' + ${iter.index + 1}">
+                <form th:action="@{/perfiles/seleccionar/{id}(id=${perfil.id})}" method="post"
+                      style="display: inline;">
+                    <button type="submit" class="profile-card" style="background: none; border: none; cursor: pointer;">
+                        <div class="profile-card__avatar"
+                             th:classappend="'avatar--' + ${#strings.replace(perfil.avatarUrl ?: 'default', 'avatar', '')}">
+                            <span th:text="${#strings.substring(perfil.nombre, 0, 1)}">A</span>
+                        </div>
+                        <div class="profile-card__name" th:text="${perfil.nombre}">Perfil</div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Añadir perfil -->
+            <div th:if="${puedeCrearMas}" class="animate-fadeInUp delay-4">
+                <a th:href="@{/registro/perfil}" class="profile-card profile-card--add" style="display: block;">
+                    <div class="profile-card__avatar">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="profile-card__name">Añadir Perfil</div>
+                </a>
+            </div>
+        </div>
+
+        <a href="#" style="display: inline-block;" class="btn btn--outline animate-fadeInUp delay-4">
+            <i class="fas fa-pen" style="margin-right: 6px;"></i> Gestionar Perfiles
+        </a>
+    </div>
+</div>
+</body>
+</html>

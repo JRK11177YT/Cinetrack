@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>Crear Perfil</title>
+</head>
+<body>
+<div layout:fragment="body">
+    <div class="auth-page">
+        <div class="auth-page__bg"></div>
+
+        <header class="auth-header">
+            <span class="navbar__logo" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: #E50914; text-transform: uppercase;">
+                CineTrack
+            </span>
+        </header>
+
+        <div class="auth-content">
+            <div class="auth-card animate-fadeInUp" style="max-width: 550px;">
+                <!-- Steps indicator -->
+                <div class="steps">
+                    <div class="step done"></div>
+                    <div class="step done"></div>
+                    <div class="step active"></div>
+                </div>
+
+                <h1 class="auth-card__title">Crea tu Perfil</h1>
+                <p class="auth-card__subtitle">
+                    Paso 3 de 3: Personaliza tu experiencia.
+                </p>
+
+                <form th:action="@{/registro/perfil}" method="post">
+                    <input type="hidden" name="avatar" id="avatarInput" value="avatar1">
+
+                    <!-- Nombre del perfil -->
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Perfil</label>
+                        <input type="text" name="nombre" id="nombre" class="form-input"
+                               placeholder="Ej: Jorge" required maxlength="50" autofocus>
+                    </div>
+
+                    <!-- Avatar selection -->
+                    <div class="form-group">
+                        <label>Elige un Avatar</label>
+                        <div class="avatar-grid">
+                            <div th:each="av, iter : ${avatares}"
+                                 class="avatar-option"
+                                 th:classappend="'avatar--' + ${#strings.replace(av, 'avatar', '')} + (${iter.index == 0} ? ' selected' : '')"
+                                 th:data-avatar="${av}"
+                                 th:text="${#strings.substring(av, av.length() - 1, av.length())}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Genre preferences -->
+                    <div class="form-group">
+                        <label>¿Qué géneros te gustan? <span style="color: var(--text-muted);">(opcional)</span></label>
+                        <div class="genre-grid">
+                            <div th:each="genero : ${generos}" class="genre-tag">
+                                <input type="checkbox" name="generoIds" th:value="${genero.id}"
+                                       style="display: none;">
+                                <span th:text="${genero.nombre}">Género</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn--accent btn--full btn--lg" style="margin-top: 16px;">
+                        <i class="fas fa-play" style="margin-right: 8px;"></i> Empezar a Ver
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

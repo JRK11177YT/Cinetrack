@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title layout:title-pattern="$CONTENT_TITLE | CineTrack">CineTrack</title>
+</head>
+<body>
+<div layout:fragment="body">
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="mainNavbar">
+        <div class="navbar__left">
+            <a href="/inicio" class="navbar__brand">
+                <span class="navbar__logo">CineTrack</span>
+            </a>
+            <ul class="navbar__links">
+                <li><a th:href="@{/inicio}" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/inicio')} ? 'active'">Inicio</a></li>
+                <li><a th:href="@{/mi-lista}" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/mi-lista')} ? 'active'">Mi Lista</a></li>
+            </ul>
+        </div>
+
+        <div class="navbar__right">
+            <div class="navbar__profile">
+                <div class="navbar__avatar"
+                     th:classappend="'avatar--' + (${session.perfilActivo?.avatarUrl} ?: 'default')"
+                     th:text="${session.perfilActivo?.nombre != null} ? ${#strings.substring(session.perfilActivo.nombre, 0, 1)} : '?'">
+                </div>
+                <div class="navbar__dropdown">
+                    <a th:href="@{/perfiles}">
+                        <i class="fas fa-users"></i> Cambiar Perfil
+                    </a>
+                    <a th:href="@{/perfiles}">
+                        <i class="fas fa-user-cog"></i> Gestionar Perfiles
+                    </a>
+                    <div class="navbar__dropdown-divider"></div>
+                    <form th:action="@{/logout}" method="post" style="margin:0">
+                        <button type="submit">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PAGE CONTENT -->
+    <main layout:fragment="content"></main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer__content">
+            <p>¿Alguna pregunta? Llama al 900 000 000</p>
+            <div class="footer__links">
+                <a href="#">Preguntas frecuentes</a>
+                <a href="#">Centro de ayuda</a>
+                <a href="#">Términos de uso</a>
+                <a href="#">Privacidad</a>
+                <a href="#">Preferencias de cookies</a>
+                <a href="#">Información corporativa</a>
+            </div>
+            <p>&copy; 2024 CineTrack — Proyecto Académico</p>
+        </div>
+    </footer>
+
+</div>
+</body>
+</html>

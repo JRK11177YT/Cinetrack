@@ -18,17 +18,14 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, length = 100)
-    private String nombre;
-
     @Column(nullable = false, length = 150)
     private String email;
 
     @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(name = "imagen_perfil", length = 255)
-    private String imagenPerfil;
+    @Column(nullable = false, length = 20)
+    private String plan;
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
@@ -39,11 +36,9 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean activo;
 
-    // Constructor vacío requerido por JPA
     public Usuario() {
     }
 
-    // Método que se ejecuta justo antes de insertar un nuevo registro desde Java
     @PrePersist
     public void prePersist() {
         if (this.fechaRegistro == null) {
@@ -55,10 +50,13 @@ public class Usuario {
         if (this.activo == null) {
             this.activo = true;
         }
+        if (this.plan == null) {
+            this.plan = "BASICO";
+        }
     }
 
     // ==========================================
-    // GETTERS Y SETTERS (Estilo tradicional)
+    // GETTERS Y SETTERS
     // ==========================================
 
     public Integer getId() {
@@ -67,14 +65,6 @@ public class Usuario {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public String getEmail() {
@@ -93,12 +83,12 @@ public class Usuario {
         this.password = password;
     }
 
-    public String getImagenPerfil() {
-        return imagenPerfil;
+    public String getPlan() {
+        return plan;
     }
 
-    public void setImagenPerfil(String imagenPerfil) {
-        this.imagenPerfil = imagenPerfil;
+    public void setPlan(String plan) {
+        this.plan = plan;
     }
 
     public LocalDateTime getFechaRegistro() {
@@ -123,5 +113,13 @@ public class Usuario {
 
     public void setActivo(Boolean activo) {
         this.activo = activo;
+    }
+
+    public int getMaxPerfiles() {
+        return switch (this.plan) {
+            case "ESTANDAR" -> 3;
+            case "PREMIUM" -> 5;
+            default -> 2;
+        };
     }
 }

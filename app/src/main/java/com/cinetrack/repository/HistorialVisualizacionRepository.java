@@ -11,9 +11,7 @@ import com.cinetrack.model.HistorialVisualizacion;
 @Repository
 public interface HistorialVisualizacionRepository extends JpaRepository<HistorialVisualizacion, Integer> {
     
-    // Para la sección "Continuar Viendo" principal
-    List<HistorialVisualizacion> findByUsuarioIdAndCompletadaFalse(Integer usuarioId);
+    List<HistorialVisualizacion> findByPerfilIdAndCompletadaFalseOrderByFechaUltimaVisualizacionDesc(Integer perfilId);
     
-    // Para saber por dónde va un usuario en una peli exacta
-    Optional<HistorialVisualizacion> findByUsuarioIdAndPeliculaId(Integer usuarioId, Integer peliculaId);
+    Optional<HistorialVisualizacion> findByPerfilIdAndPeliculaId(Integer perfilId, Integer peliculaId);
 }

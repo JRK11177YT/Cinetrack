@@ -20,12 +20,10 @@ public class MiLista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // Relación con el Usuario
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "perfil_id", nullable = false)
+    private Perfil perfil;
 
-    // Relación con la Película que ha guardado
     @ManyToOne
     @JoinColumn(name = "pelicula_id", nullable = false)
     private Pelicula pelicula;
@@ -56,12 +54,12 @@ public class MiLista {
         this.id = id;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Perfil getPerfil() {
+        return perfil;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
     }
 
     public Pelicula getPelicula() {
