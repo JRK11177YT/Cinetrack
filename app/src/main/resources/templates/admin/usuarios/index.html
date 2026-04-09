@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      lang="es">
+<head>
+    <title>Usuarios</title>
+</head>
+<body>
+<div layout:fragment="admin-content">
+
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title">Usuarios</h1>
+            <p class="admin-page-subtitle">Gestión de cuentas registradas</p>
+        </div>
+    </div>
+
+    <!-- Flash messages -->
+    <div th:if="${mensaje}" class="admin-alert admin-alert--success">
+        <i class="fas fa-check-circle"></i> <span th:text="${mensaje}"></span>
+    </div>
+    <div th:if="${error}" class="admin-alert admin-alert--error">
+        <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Email</th>
+                    <th>Plan</th>
+                    <th>Rol</th>
+                    <th>Activo</th>
+                    <th>Registro</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.id}">1</td>
+                    <td th:text="${u.email}">email@ejemplo.com</td>
+                    <td>
+                        <span class="admin-badge"
+                              th:classappend="${u.plan == 'PREMIUM'} ? ' admin-badge--gold' : (${u.plan == 'ESTANDAR'} ? ' admin-badge--blue' : ' admin-badge--gray')"
+                              th:text="${u.plan}">BASICO</span>
+                    </td>
+                    <td>
+                        <span class="admin-badge"
+                              th:classappend="${u.rol == 'ADMIN'} ? ' admin-badge--red' : ' admin-badge--gray'"
+                              th:text="${u.rol}">USER</span>
+                    </td>
+                    <td>
+                        <span th:if="${u.activo}" class="admin-badge admin-badge--green">Activo</span>
+                        <span th:unless="${u.activo}" class="admin-badge admin-badge--gray">Inactivo</span>
+                    </td>
+                    <td th:text="${#temporals.format(u.fechaRegistro, 'dd/MM/yyyy')}">01/01/2024</td>
+                    <td class="admin-table__actions">
+                        <a th:href="@{/admin/usuarios/editar/{id}(id=${u.id})}" class="admin-btn admin-btn--sm" title="Editar">
+                            <i class="fas fa-pen"></i>
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="7" style="text-align:center; color: var(--text-secondary);">No hay usuarios registrados</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

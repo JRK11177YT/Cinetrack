@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title layout:title-pattern="$CONTENT_TITLE | Admin CineTrack">Admin</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CineTrack CSS -->
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body class="admin-body">
+
+<div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar__brand">
+            <span class="admin-sidebar__logo">CineTrack</span>
+            <span class="admin-sidebar__tag">Admin</span>
+        </div>
+
+        <nav class="admin-sidebar__nav">
+            <a th:href="@{/admin}"
+               th:classappend="${#strings.startsWith(currentUri ?: '', '/admin') and !(#strings.startsWith(currentUri ?: '', '/admin/peliculas') or #strings.startsWith(currentUri ?: '', '/admin/usuarios') or #strings.startsWith(currentUri ?: '', '/admin/generos'))} ? 'active'"
+               class="admin-sidebar__link">
+                <i class="fas fa-th-large"></i>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/admin/peliculas}"
+               th:classappend="${#strings.startsWith(currentUri ?: '', '/admin/peliculas')} ? 'active'"
+               class="admin-sidebar__link">
+                <i class="fas fa-film"></i>
+                <span>Películas</span>
+            </a>
+            <a th:href="@{/admin/usuarios}"
+               th:classappend="${#strings.startsWith(currentUri ?: '', '/admin/usuarios')} ? 'active'"
+               class="admin-sidebar__link">
+                <i class="fas fa-users"></i>
+                <span>Usuarios</span>
+            </a>
+            <a th:href="@{/admin/generos}"
+               th:classappend="${#strings.startsWith(currentUri ?: '', '/admin/generos')} ? 'active'"
+               class="admin-sidebar__link">
+                <i class="fas fa-tags"></i>
+                <span>Géneros</span>
+            </a>
+        </nav>
+
+        <div class="admin-sidebar__footer">
+            <a th:href="@{/inicio}" class="admin-sidebar__link admin-sidebar__link--muted">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver a CineTrack</span>
+            </a>
+            <form th:action="@{/logout}" method="post" style="margin:0">
+                <button type="submit" class="admin-sidebar__link admin-sidebar__link--logout" style="width:100%; background:none; border:none; cursor:pointer; text-align:left;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-content">
+        <div layout:fragment="admin-content"></div>
+    </main>
+
+</div>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

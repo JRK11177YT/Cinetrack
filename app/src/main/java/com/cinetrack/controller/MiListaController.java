@@ -19,6 +19,7 @@ import com.cinetrack.model.Pelicula;
 import com.cinetrack.model.Perfil;
 import com.cinetrack.service.MiListaService;
 import com.cinetrack.service.PeliculaService;
+import com.cinetrack.service.PerfilService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,16 +29,19 @@ public class MiListaController {
 
     private final MiListaService miListaService;
     private final PeliculaService peliculaService;
+    private final PerfilService perfilService;
 
     @Autowired
-    public MiListaController(MiListaService miListaService, PeliculaService peliculaService) {
+    public MiListaController(MiListaService miListaService, PeliculaService peliculaService, PerfilService perfilService) {
         this.miListaService = miListaService;
         this.peliculaService = peliculaService;
+        this.perfilService = perfilService;
     }
 
     @GetMapping
     public String miLista(Model model, HttpSession session) {
-        Perfil perfil = (Perfil) session.getAttribute("perfilActivo");
+        Integer perfilId = (Integer) session.getAttribute("perfilActivoId");
+        Perfil perfil = perfilService.obtenerPorId(perfilId).orElseThrow();
         List<MiLista> lista = miListaService.obtenerListaPorPerfil(perfil.getId());
         model.addAttribute("miLista", lista);
         model.addAttribute("perfil", perfil);
@@ -47,7 +51,8 @@ public class MiListaController {
     @PostMapping("/agregar/{peliculaId}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> agregar(@PathVariable Integer peliculaId, HttpSession session) {
-        Perfil perfil = (Perfil) session.getAttribute("perfilActivo");
+        Integer perfilId = (Integer) session.getAttribute("perfilActivoId");
+        Perfil perfil = perfilService.obtenerPorId(perfilId).orElseThrow();
         Pelicula pelicula = peliculaService.obtenerPorId(peliculaId).orElseThrow();
         miListaService.agregar(perfil, pelicula);
         return ResponseEntity.ok(Map.of("success", true, "message", "Añadido a Mi Lista"));
@@ -56,8 +61,8 @@ public class MiListaController {
     @DeleteMapping("/eliminar/{peliculaId}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> eliminar(@PathVariable Integer peliculaId, HttpSession session) {
-        Perfil perfil = (Perfil) session.getAttribute("perfilActivo");
-        miListaService.eliminar(perfil.getId(), peliculaId);
+        Integer perfilId = (Integer) session.getAttribute("perfilActivoId");
+        miListaService.eliminar(perfilId, peliculaId);
         return ResponseEntity.ok(Map.of("success", true, "message", "Eliminado de Mi Lista"));
     }
 }

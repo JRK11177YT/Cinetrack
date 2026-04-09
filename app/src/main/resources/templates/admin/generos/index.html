@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      lang="es">
+<head>
+    <title>Géneros</title>
+</head>
+<body>
+<div layout:fragment="admin-content">
+
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title">Géneros</h1>
+            <p class="admin-page-subtitle">Categorías del catálogo</p>
+        </div>
+        <a th:href="@{/admin/generos/nuevo}" class="admin-btn admin-btn--accent">
+            <i class="fas fa-plus"></i> Nuevo Género
+        </a>
+    </div>
+
+    <!-- Flash messages -->
+    <div th:if="${mensaje}" class="admin-alert admin-alert--success">
+        <i class="fas fa-check-circle"></i> <span th:text="${mensaje}"></span>
+    </div>
+    <div th:if="${error}" class="admin-alert admin-alert--error">
+        <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="g : ${generos}">
+                    <td th:text="${g.id}">1</td>
+                    <td th:text="${g.nombre}">Nombre</td>
+                    <td th:text="${g.descripcion ?: '—'}">—</td>
+                    <td class="admin-table__actions">
+                        <a th:href="@{/admin/generos/editar/{id}(id=${g.id})}" class="admin-btn admin-btn--sm" title="Editar">
+                            <i class="fas fa-pen"></i>
+                        </a>
+                        <form th:action="@{/admin/generos/eliminar/{id}(id=${g.id})}" method="post" style="display:inline"
+                              onsubmit="return confirm('¿Eliminar el género? Asegúrate de que no tiene películas asociadas.');">
+                            <button type="submit" class="admin-btn admin-btn--sm admin-btn--danger" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(generos)}">
+                    <td colspan="4" style="text-align:center; color: var(--text-secondary);">No hay géneros registrados</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

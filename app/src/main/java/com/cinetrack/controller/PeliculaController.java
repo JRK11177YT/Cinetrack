@@ -12,6 +12,7 @@ import com.cinetrack.model.Perfil;
 import com.cinetrack.service.HistorialVisualizacionService;
 import com.cinetrack.service.MiListaService;
 import com.cinetrack.service.PeliculaService;
+import com.cinetrack.service.PerfilService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -21,18 +22,21 @@ public class PeliculaController {
     private final PeliculaService peliculaService;
     private final MiListaService miListaService;
     private final HistorialVisualizacionService historialService;
+    private final PerfilService perfilService;
 
     @Autowired
     public PeliculaController(PeliculaService peliculaService, MiListaService miListaService,
-                              HistorialVisualizacionService historialService) {
+                              HistorialVisualizacionService historialService, PerfilService perfilService) {
         this.peliculaService = peliculaService;
         this.miListaService = miListaService;
         this.historialService = historialService;
+        this.perfilService = perfilService;
     }
 
     @GetMapping("/pelicula/{id}")
     public String detalle(@PathVariable Integer id, Model model, HttpSession session) {
-        Perfil perfil = (Perfil) session.getAttribute("perfilActivo");
+        Integer perfilId = (Integer) session.getAttribute("perfilActivoId");
+        Perfil perfil = perfilService.obtenerPorId(perfilId).orElseThrow();
         Pelicula pelicula = peliculaService.obtenerPorId(id).orElseThrow();
 
         boolean enMiLista = miListaService.estaEnMiLista(perfil.getId(), id);

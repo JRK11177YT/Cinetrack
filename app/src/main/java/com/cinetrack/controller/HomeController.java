@@ -16,6 +16,7 @@ import com.cinetrack.model.Perfil;
 import com.cinetrack.service.GeneroService;
 import com.cinetrack.service.HistorialVisualizacionService;
 import com.cinetrack.service.PeliculaService;
+import com.cinetrack.service.PerfilService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -25,13 +26,15 @@ public class HomeController {
     private final PeliculaService peliculaService;
     private final GeneroService generoService;
     private final HistorialVisualizacionService historialService;
+    private final PerfilService perfilService;
 
     @Autowired
     public HomeController(PeliculaService peliculaService, GeneroService generoService,
-                          HistorialVisualizacionService historialService) {
+                          HistorialVisualizacionService historialService, PerfilService perfilService) {
         this.peliculaService = peliculaService;
         this.generoService = generoService;
         this.historialService = historialService;
+        this.perfilService = perfilService;
     }
 
     @GetMapping("/")
@@ -41,7 +44,15 @@ public class HomeController {
 
     @GetMapping("/inicio")
     public String inicio(Model model, HttpSession session) {
-        Perfil perfil = (Perfil) session.getAttribute("perfilActivo");
+        Integer perfilId = (Integer) session.getAttribute("perfilActivoId");
+        if (perfilId == null) {
+            return "redirect:/perfiles";
+        }
+        Perfil perfil = perfilService.obtenerPorId(perfilId).orElse(null);
+        if (perfil == null) {
+            session.removeAttribute("perfilActivoId");
+            return "redirect:/perfiles";
+        }
 
         // Película destacada para el Hero Banner
         List<Pelicula> destacadas = peliculaService.obtenerDestacadas();

@@ -1,5 +1,6 @@
 package com.cinetrack.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ public class UsuarioService {
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
     }
 
     public Optional<Usuario> obtenerPorId(Integer id) {

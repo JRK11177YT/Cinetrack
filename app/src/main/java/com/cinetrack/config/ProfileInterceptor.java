@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.cinetrack.model.Perfil;
 import com.cinetrack.model.Usuario;
@@ -34,7 +35,7 @@ public class ProfileInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession(false);
 
         // Si ya tiene perfil activo, dejar pasar
-        if (session != null && session.getAttribute("perfilActivo") != null) {
+        if (session != null && session.getAttribute("perfilActivoId") != null) {
             return true;
         }
 
@@ -60,5 +61,27 @@ public class ProfileInterceptor implements HandlerInterceptor {
         // Tiene perfiles pero no ha seleccionado uno → ir a selección
         response.sendRedirect("/perfiles");
         return false;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        if (modelAndView != null) {
+            modelAndView.addObject("currentUri", request.getRequestURI());
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getPrincipal())) {
+                boolean esAdmin = auth.getAuthorities().stream()
+                        .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                modelAndView.addObject("esAdmin", esAdmin);
+            }
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                Integer perfilId = (Integer) session.getAttribute("perfilActivoId");
+                if (perfilId != null) {
+                    perfilService.obtenerPorId(perfilId).ifPresent(perfil -> {
+                        modelAndView.addObject("perfilActivo", perfil);
+                    });
+                }
+            }
+        }
     }
 }

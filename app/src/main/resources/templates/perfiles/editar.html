@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>Editar Perfil</title>
+</head>
+<body>
+<div layout:fragment="body">
+    <div class="profiles-page animate-fadeIn" style="justify-content: flex-start; padding-top: 80px;">
+
+        <h1 class="profiles-page__title animate-fadeInUp" style="font-size: 2rem;">Editar Perfil</h1>
+
+        <div class="edit-profile animate-fadeInUp delay-1">
+            <form th:action="@{/perfiles/editar/{id}(id=${perfil.id})}" method="post"
+                  enctype="multipart/form-data" class="edit-profile__form">
+
+                <!-- Avatar actual -->
+                <div class="edit-profile__avatar-section">
+                    <div class="edit-profile__current-avatar">
+                        <div th:if="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
+                             class="profile-card__avatar" style="padding:0; width:120px; height:120px; font-size:2.5rem;">
+                            <img th:src="@{'/uploads/avatars/' + ${#strings.substringAfter(perfil.avatarUrl, 'custom:')}}"
+                                 alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius: var(--radius);"/>
+                        </div>
+                        <div th:unless="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
+                             class="profile-card__avatar"
+                             th:classappend="'avatar--' + ${perfil.avatarUrl ?: 'default'}"
+                             style="width:120px; height:120px; font-size:2.5rem;">
+                            <span th:text="${#strings.substring(perfil.nombre, 0, 1)}">A</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nombre -->
+                <div class="form-group">
+                    <label for="nombre">Nombre del perfil</label>
+                    <input type="text" id="nombre" name="nombre" class="form-input"
+                           th:value="${perfil.nombre}" required maxlength="50" autocomplete="off"/>
+                </div>
+
+                <!-- Avatar preset -->
+                <div class="form-group">
+                    <label>Elige un avatar</label>
+                    <div class="avatar-grid">
+                        <div th:each="i : ${#numbers.sequence(1,6)}"
+                             th:classappend="'avatar--' + ${i} + (${perfil.avatarUrl == '' + i} ? ' selected' : '')"
+                             class="avatar-option"
+                             th:data-value="${i}"
+                             onclick="selectAvatar(this)">
+                            <span th:text="${i}"></span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="avatarPreset" id="avatarPreset" value=""/>
+                </div>
+
+                <!-- Avatar personalizado -->
+                <div class="form-group">
+                    <label for="avatarFile">O sube tu propia imagen</label>
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="avatarFile" name="avatarFile"
+                               accept="image/png, image/jpeg, image/jpg, image/webp"
+                               class="upload-area__input"
+                               onchange="previewUpload(this)"/>
+                        <div class="upload-area__content" id="uploadContent">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Arrastra o haz clic para subir</span>
+                            <small>JPG, PNG o WebP — máx. 2MB</small>
+                        </div>
+                        <div class="upload-area__preview" id="uploadPreview" style="display:none;">
+                            <img id="previewImg" alt="Preview"/>
+                            <button type="button" class="upload-area__remove" onclick="removeUpload()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="edit-profile__actions">
+                    <button type="submit" class="btn btn--accent btn--lg">Guardar</button>
+                    <a th:href="@{/perfiles/gestionar}" class="btn btn--ghost btn--lg">Cancelar</a>
+                </div>
+            </form>
+
+            <!-- Eliminar perfil -->
+            <div class="edit-profile__danger">
+                <form th:action="@{/perfiles/eliminar/{id}(id=${perfil.id})}" method="post"
+                      onsubmit="return confirm('¿Estás seguro de que quieres eliminar este perfil? Esta acción no se puede deshacer.');">
+                    <button type="submit" class="btn btn--danger">
+                        <i class="fas fa-trash-alt"></i> Eliminar Perfil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectAvatar(el) {
+            document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('avatarPreset').value = el.dataset.value;
+            // Clear file upload when selecting preset
+            document.getElementById('avatarFile').value = '';
+            document.getElementById('uploadPreview').style.display = 'none';
+            document.getElementById('uploadContent').style.display = 'flex';
+        }
+
+        function previewUpload(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('uploadPreview').style.display = 'flex';
+                    document.getElementById('uploadContent').style.display = 'none';
+                    // Deselect preset
+                    document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+                    document.getElementById('avatarPreset').value = '';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function removeUpload() {
+            document.getElementById('avatarFile').value = '';
+            document.getElementById('uploadPreview').style.display = 'none';
+            document.getElementById('uploadContent').style.display = 'flex';
+        }
+    </script>
+</div>
+</body>
+</html>

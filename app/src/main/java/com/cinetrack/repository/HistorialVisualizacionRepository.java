@@ -14,4 +14,6 @@ public interface HistorialVisualizacionRepository extends JpaRepository<Historia
     List<HistorialVisualizacion> findByPerfilIdAndCompletadaFalseOrderByFechaUltimaVisualizacionDesc(Integer perfilId);
     
     Optional<HistorialVisualizacion> findByPerfilIdAndPeliculaId(Integer perfilId, Integer peliculaId);
+
+    void deleteByPerfilId(Integer perfilId);
 }

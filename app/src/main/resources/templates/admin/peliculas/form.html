@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      lang="es">
+<head>
+    <title th:text="${accion == 'nueva'} ? 'Nueva Película' : 'Editar Película'">Película</title>
+</head>
+<body>
+<div layout:fragment="admin-content">
+
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title" th:text="${accion == 'nueva'} ? 'Nueva Película' : 'Editar Película'">Película</h1>
+            <p class="admin-page-subtitle" th:text="${accion == 'nueva'} ? 'Añadir al catálogo' : 'Modificar datos'"></p>
+        </div>
+        <a th:href="@{/admin/peliculas}" class="admin-btn">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="admin-form-card">
+        <form th:action="${accion == 'nueva'} ? @{/admin/peliculas/nueva} : @{/admin/peliculas/editar/{id}(id=${pelicula.id})}"
+              method="post" enctype="multipart/form-data" class="admin-form">
+
+            <div class="admin-form-grid">
+                <!-- Título -->
+                <div class="admin-form-group admin-form-group--full">
+                    <label for="titulo">Título <span class="admin-required">*</span></label>
+                    <input type="text" id="titulo" name="titulo" class="admin-input"
+                           th:value="${pelicula.titulo}" required maxlength="150" placeholder="Título de la película"/>
+                </div>
+
+                <!-- Descripción -->
+                <div class="admin-form-group admin-form-group--full">
+                    <label for="descripcion">Descripción <span class="admin-required">*</span></label>
+                    <textarea id="descripcion" name="descripcion" class="admin-input admin-input--textarea"
+                              required rows="4" placeholder="Sinopsis de la película..." th:text="${pelicula.descripcion}"></textarea>
+                </div>
+
+                <!-- Género -->
+                <div class="admin-form-group">
+                    <label for="generoId">Género <span class="admin-required">*</span></label>
+                    <select id="generoId" name="generoId" class="admin-input admin-input--select" required>
+                        <option value="">— Selecciona un género —</option>
+                        <option th:each="g : ${generos}"
+                                th:value="${g.id}"
+                                th:text="${g.nombre}"
+                                th:selected="${pelicula.genero != null and pelicula.genero.id == g.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Año -->
+                <div class="admin-form-group">
+                    <label for="anio">Año <span class="admin-required">*</span></label>
+                    <input type="number" id="anio" name="anio" class="admin-input"
+                           th:value="${pelicula.anio}" required min="1900" max="2099" placeholder="2024"/>
+                </div>
+
+                <!-- Duración -->
+                <div class="admin-form-group">
+                    <label for="duracion">Duración (minutos) <span class="admin-required">*</span></label>
+                    <input type="number" id="duracion" name="duracion" class="admin-input"
+                           th:value="${pelicula.duracion}" required min="1" max="600" placeholder="120"/>
+                </div>
+
+                <!-- Destacada -->
+                <div class="admin-form-group admin-form-group--checkbox">
+                    <label class="admin-checkbox-label">
+                        <input type="checkbox" name="destacada" value="true"
+                               th:checked="${pelicula.destacada != null and pelicula.destacada}"/>
+                        <span>Película destacada (aparece en el inicio)</span>
+                    </label>
+                </div>
+
+                <!-- IMAGEN (Póster) -->
+                <div class="admin-form-group admin-form-group--full">
+                    <label>Imagen / Póster <small class="admin-form-hint" style="text-transform:none; letter-spacing:0;">(JPG, PNG, WebP — máx. 10 MB)</small></label>
+
+                    <div class="poster-upload-wrap">
+                        <!-- Thumbnail: muestra el póster actual o placeholder -->
+                        <div class="poster-thumb" id="posterThumb">
+                            <img th:if="${pelicula.urlImagen != null}"
+                                 th:src="${pelicula.urlImagen}"
+                                 id="posterPreviewImg" alt="Póster"
+                                 onerror="this.style.display='none'; document.getElementById('posterNoImg').style.display='flex'"/>
+                            <div id="posterNoImg"
+                                 th:style="${pelicula.urlImagen != null} ? 'display:none' : ''">
+                                <i class="fas fa-image"></i>
+                                <span>Sin imagen</span>
+                            </div>
+                        </div>
+
+                        <!-- Controles: estado + botón subida -->
+                        <div class="poster-upload-controls">
+                            <p id="posterStatus"
+                               th:text="${pelicula.urlImagen != null} ? 'Imagen guardada correctamente' : 'No hay imagen subida aún'"></p>
+                            <label for="imagenFile" class="admin-btn" style="cursor:pointer; width:fit-content;">
+                                <i class="fas fa-upload"></i>
+                                <span th:text="${pelicula.urlImagen != null} ? 'Cambiar imagen' : 'Subir imagen'">Subir imagen</span>
+                            </label>
+                            <input type="file" id="imagenFile" name="imagenFile"
+                                   accept="image/png, image/jpeg, image/webp"
+                                   style="display:none;"
+                                   onchange="onPosterSelect(this)"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIDEO -->
+                <div class="admin-form-group admin-form-group--full">
+                    <label>Archivo de vídeo <small class="admin-form-hint" style="text-transform:none; letter-spacing:0;">(MP4, WebM, MKV — máx. 500 MB)</small></label>
+
+                    <!-- Info vídeo actual -->
+                    <div th:if="${pelicula.urlVideo != null}" class="admin-file-current" id="videoCurrentWrap">
+                        <i class="fas fa-film" style="font-size:1.5rem; color:var(--accent);"></i>
+                        <span class="admin-file-current__label" th:text="${#strings.contains(pelicula.urlVideo, '/uploads/') ? 'Vídeo subido: ' + #strings.substringAfterLast(pelicula.urlVideo, '/') : 'URL externa: ' + pelicula.urlVideo}">Vídeo actual</span>
+                    </div>
+
+                    <!-- Barra de progreso -->
+                    <div id="videoProgress" style="display:none; margin-bottom:8px;">
+                        <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:6px;">
+                            <span id="videoProgressLabel">Subiendo...</span>
+                            <span id="videoProgressPct" style="float:right; font-weight:600; color:var(--accent);">0%</span>
+                        </div>
+                        <div style="height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+                            <div id="videoProgressBar" style="height:100%; width:0%; background:var(--accent); border-radius:3px; transition:width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Input subida vídeo -->
+                    <div class="admin-file-drop" id="videoDrop"
+                         ondragover="event.preventDefault(); this.classList.add('drag-over')"
+                         ondragleave="this.classList.remove('drag-over')"
+                         ondrop="handleDrop(event, 'videoFile', 'videoPreview', 'videoDrop', 'video')">
+                        <div id="videoPreview" class="admin-file-drop__content">
+                            <i class="fas fa-video"></i>
+                            <span th:text="${pelicula.urlVideo != null} ? 'Subir nuevo vídeo (reemplazará el actual)' : 'Arrastra o haz clic para subir el vídeo'">Subir vídeo</span>
+                        </div>
+                        <input type="file" id="videoFile" name="videoFile"
+                               accept="video/mp4, video/webm, video/x-matroska"
+                               onchange="previewFile(this, 'videoPreview', 'videoDrop', 'video')"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-btn admin-btn--accent" id="submitBtn">
+                    <i class="fas fa-save"></i>
+                    <span th:text="${accion == 'nueva'} ? 'Crear Película' : 'Guardar Cambios'">Guardar</span>
+                </button>
+                <a th:href="@{/admin/peliculas}" class="admin-btn">Cancelar</a>
+                <span id="uploadingMsg" style="display:none; color:var(--text-muted); font-size:0.85rem;">
+                    <i class="fas fa-spinner fa-spin"></i> Subiendo archivo, espera...
+                </span>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        /* ── Poster upload ── */
+        .poster-upload-wrap {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+        .poster-thumb {
+            flex-shrink: 0;
+            width: 90px;
+            height: 130px;
+            background: rgba(255,255,255,0.06);
+            border-radius: var(--radius);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .poster-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--radius);
+        }
+        #posterNoImg {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-align: center;
+            padding: 8px;
+        }
+        #posterNoImg i { font-size: 1.6rem; }
+        .poster-upload-controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+        #posterStatus {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        /* ── Video drop zone ── */
+        .admin-file-drop {
+            position: relative;
+            border: 2px dashed rgba(255,255,255,0.15);
+            border-radius: var(--radius);
+            transition: var(--transition);
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-file-drop:hover, .admin-file-drop.drag-over {
+            border-color: var(--accent);
+            background: rgba(229, 9, 20, 0.05);
+        }
+        .admin-file-drop input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .admin-file-drop__content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 24px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .admin-file-drop__content i { font-size: 1.4rem; color: var(--text-secondary); }
+        .admin-file-drop__content.has-file { color: #10B981; }
+        .admin-file-drop__content.has-file i { color: #10B981; }
+        .admin-file-current {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            word-break: break-all;
+        }
+    </style>
+
+    <script>
+        /* ── Poster image selector ── */
+        function onPosterSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                let img = document.getElementById('posterPreviewImg');
+                if (!img) {
+                    img = document.createElement('img');
+                    img.id = 'posterPreviewImg';
+                    document.getElementById('posterThumb').appendChild(img);
+                }
+                img.src = e.target.result;
+                img.style.display = '';
+                const noImg = document.getElementById('posterNoImg');
+                if (noImg) noImg.style.display = 'none';
+
+                const status = document.getElementById('posterStatus');
+                if (status) {
+                    status.innerHTML = '<i class="fas fa-check-circle" style="color:#10B981;margin-right:6px;"></i>'
+                        + escapeHtml(file.name) + ' (' + formatBytes(file.size) + ')';
+                    status.style.color = '#10B981';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* ── Video drop zone ── */
+        function previewFile(input, previewId, dropId, type) {
+            const file = input.files[0];
+            if (!file) return;
+            const preview = document.getElementById(previewId);
+            preview.innerHTML =
+                '<i class="fas fa-check-circle" style="color:#10B981;font-size:1.4rem;"></i>' +
+                '<span style="color:#10B981;">' + escapeHtml(file.name) + ' (' + formatBytes(file.size) + ') \u2014 listo para subir</span>';
+            preview.classList.add('has-file');
+        }
+
+        function handleDrop(event, inputId, previewId, dropId, type) {
+            event.preventDefault();
+            document.getElementById(dropId).classList.remove('drag-over');
+            const dt = event.dataTransfer;
+            if (dt.files && dt.files.length > 0) {
+                const input = document.getElementById(inputId);
+                input.files = dt.files;
+                previewFile(input, previewId, dropId, type);
+            }
+        }
+
+        function formatBytes(bytes) {
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('uploadingMsg').style.display = 'inline-flex';
+
+            const videoFile = document.getElementById('videoFile');
+            if (videoFile && videoFile.files && videoFile.files.length > 0) {
+                document.getElementById('videoProgress').style.display = 'block';
+                let pct = 0;
+                const bar = document.getElementById('videoProgressBar');
+                const pctLabel = document.getElementById('videoProgressPct');
+                setInterval(function() {
+                    pct = Math.min(pct + Math.random() * 3, 90);
+                    bar.style.width = pct.toFixed(0) + '%';
+                    pctLabel.textContent = pct.toFixed(0) + '%';
+                }, 400);
+            }
+        });
+    </script>
+
+</div>
+</body>
+</html>
+

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>Mi Cuenta</title>
+</head>
+<body>
+<div layout:fragment="body">
+    <div class="cuenta-page animate-fadeIn">
+
+        <!-- Header -->
+        <div class="cuenta-header animate-fadeInUp">
+            <a th:href="@{/perfiles}" class="cuenta-header__back">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="cuenta-header__title">Mi Cuenta</h1>
+        </div>
+
+        <!-- Flash messages -->
+        <div th:if="${mensaje}" class="form-success animate-fadeInUp" style="max-width:700px; margin:0 auto 24px;">
+            <i class="fas fa-check-circle"></i> <span th:text="${mensaje}">OK</span>
+        </div>
+        <div th:if="${error}" class="form-error animate-fadeInUp" style="max-width:700px; margin:0 auto 24px;">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error</span>
+        </div>
+
+        <div class="cuenta-sections">
+
+            <!-- Sección: Información de cuenta -->
+            <section class="cuenta-section animate-fadeInUp delay-1">
+                <h2 class="cuenta-section__title">
+                    <i class="fas fa-user"></i> Información de la Cuenta
+                </h2>
+                <div class="cuenta-section__body">
+                    <div class="cuenta-field">
+                        <span class="cuenta-field__label">Correo electrónico</span>
+                        <span class="cuenta-field__value" th:text="${usuario.email}">email@ejemplo.com</span>
+                    </div>
+                    <div class="cuenta-field">
+                        <span class="cuenta-field__label">Miembro desde</span>
+                        <span class="cuenta-field__value"
+                              th:text="${#temporals.format(usuario.fechaRegistro, 'dd MMMM yyyy')}">01 enero 2024</span>
+                    </div>
+                    <div class="cuenta-field">
+                        <span class="cuenta-field__label">Rol</span>
+                        <span class="cuenta-field__value cuenta-field__badge" th:text="${usuario.rol}">USER</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección: Suscripción -->
+            <section class="cuenta-section animate-fadeInUp delay-2">
+                <h2 class="cuenta-section__title">
+                    <i class="fas fa-crown"></i> Suscripción
+                </h2>
+                <div class="cuenta-section__body">
+                    <div class="cuenta-plan-cards">
+                        <form th:action="@{/cuenta/plan}" method="post">
+                            <div class="cuenta-plan-grid">
+                                <label th:each="p : ${ {'BASICO','ESTANDAR','PREMIUM'} }"
+                                       class="cuenta-plan-option"
+                                       th:classappend="${usuario.plan == p} ? 'cuenta-plan-option--active' : ''">
+                                    <input type="radio" name="plan" th:value="${p}" th:checked="${usuario.plan == p}"/>
+                                    <div class="cuenta-plan-option__content">
+                                        <span class="cuenta-plan-option__name" th:text="${p}">PLAN</span>
+                                        <span class="cuenta-plan-option__profiles"
+                                              th:text="${p == 'BASICO' ? '2 perfiles' : (p == 'ESTANDAR' ? '3 perfiles' : '5 perfiles')}">
+                                            2 perfiles
+                                        </span>
+                                        <span class="cuenta-plan-option__price"
+                                              th:text="${p == 'BASICO' ? '7,99 €/mes' : (p == 'ESTANDAR' ? '12,99 €/mes' : '17,99 €/mes')}">
+                                            7,99 €/mes
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn--accent" style="margin-top:16px;">
+                                Cambiar Plan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección: Cambiar contraseña -->
+            <section class="cuenta-section animate-fadeInUp delay-3">
+                <h2 class="cuenta-section__title">
+                    <i class="fas fa-lock"></i> Cambiar Contraseña
+                </h2>
+                <div class="cuenta-section__body">
+                    <form th:action="@{/cuenta/password}" method="post" class="cuenta-password-form">
+                        <div class="form-group">
+                            <label for="passwordActual">Contraseña actual</label>
+                            <input type="password" id="passwordActual" name="passwordActual"
+                                   class="form-input" required autocomplete="current-password"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordNueva">Nueva contraseña</label>
+                            <input type="password" id="passwordNueva" name="passwordNueva"
+                                   class="form-input" required minlength="6" autocomplete="new-password"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordConfirmar">Confirmar nueva contraseña</label>
+                            <input type="password" id="passwordConfirmar" name="passwordConfirmar"
+                                   class="form-input" required minlength="6" autocomplete="new-password"/>
+                        </div>
+                        <button type="submit" class="btn btn--accent">Cambiar Contraseña</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Sección: Cerrar sesión -->
+            <section class="cuenta-section animate-fadeInUp delay-4">
+                <div class="cuenta-section__body" style="text-align:center; padding:32px;">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn--danger btn--lg">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

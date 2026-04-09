@@ -9,9 +9,26 @@
 <body>
 <main layout:fragment="content">
 
+    <!-- ====== VIDEO PLAYER (oculto hasta pulsar Reproducir) ====== -->
+    <div id="videoPlayerOverlay" class="video-player-overlay" style="display:none;"
+         th:if="${pelicula.urlVideo != null}">
+        <div class="video-player-wrapper">
+            <button class="video-player-close" onclick="cerrarReproductor()" title="Cerrar">
+                <i class="fas fa-times"></i>
+            </button>
+            <video id="videoPlayer" controls autoplay
+                   th:src="${pelicula.urlVideo}"
+                   style="width:100%; height:100%; background:#000;">
+                Tu navegador no soporta el reproductor de vídeo.
+            </video>
+        </div>
+    </div>
+
     <!-- ====== DETAIL HERO ====== -->
     <section class="detail-hero">
-        <div class="detail-hero__bg" style="background-color: #1a1a2e;"></div>
+        <div class="detail-hero__bg"
+             th:style="${pelicula.urlImagen != null} ? 'background-image: url(' + ${pelicula.urlImagen} + ')' : 'background-color: #1a1a2e'"
+             style="background-color: #1a1a2e;"></div>
         <div class="detail-hero__overlay"></div>
         <div class="detail-content animate-fadeInUp">
             <h1 class="detail-content__title" th:text="${pelicula.titulo}">Título</h1>
@@ -24,10 +41,17 @@
             <p class="detail-content__description" th:text="${pelicula.descripcion}">Descripción...</p>
 
             <div class="detail-content__buttons">
-                <button class="btn btn--play">
+                <!-- Botón Reproducir: abre el reproductor si hay vídeo -->
+                <button class="btn btn--play" th:if="${pelicula.urlVideo != null}" onclick="abrirReproductor()">
                     <i class="fas fa-play"></i>
                     <span th:if="${progreso != null && !progreso.completada}">Continuar</span>
                     <span th:unless="${progreso != null && !progreso.completada}">Reproducir</span>
+                </button>
+
+                <!-- Si no hay vídeo, mostrar botón deshabilitado -->
+                <button class="btn btn--play" th:if="${pelicula.urlVideo == null}" disabled
+                        style="opacity:0.5; cursor:not-allowed;">
+                    <i class="fas fa-play"></i> Sin vídeo disponible
                 </button>
 
                 <button class="btn btn--icon"
@@ -80,6 +104,70 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .video-player-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-player-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .video-player-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: rgba(0,0,0,0.6);
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .video-player-close:hover {
+            background: rgba(229, 9, 20, 0.8);
+        }
+    </style>
+
+    <script>
+        function abrirReproductor() {
+            var overlay = document.getElementById('videoPlayerOverlay');
+            var video = document.getElementById('videoPlayer');
+            if (overlay && video) {
+                overlay.style.display = 'flex';
+                video.play();
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function cerrarReproductor() {
+            var overlay = document.getElementById('videoPlayerOverlay');
+            var video = document.getElementById('videoPlayer');
+            if (overlay && video) {
+                video.pause();
+                overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarReproductor();
+        });
+    </script>
 
 </main>
 </body>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      lang="es">
+<head>
+    <title>Películas</title>
+</head>
+<body>
+<div layout:fragment="admin-content">
+
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title">Películas</h1>
+            <p class="admin-page-subtitle">Gestión del catálogo</p>
+        </div>
+        <a th:href="@{/admin/peliculas/nueva}" class="admin-btn admin-btn--accent">
+            <i class="fas fa-plus"></i> Nueva Película
+        </a>
+    </div>
+
+    <!-- Flash messages -->
+    <div th:if="${mensaje}" class="admin-alert admin-alert--success">
+        <i class="fas fa-check-circle"></i> <span th:text="${mensaje}"></span>
+    </div>
+    <div th:if="${error}" class="admin-alert admin-alert--error">
+        <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Título</th>
+                    <th>Género</th>
+                    <th>Año</th>
+                    <th>Duración</th>
+                    <th>Destacada</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${peliculas}">
+                    <td th:text="${p.id}">1</td>
+                    <td th:text="${p.titulo}">Título</td>
+                    <td th:text="${p.genero?.nombre}">Género</td>
+                    <td th:text="${p.anio}">2024</td>
+                    <td th:text="${p.duracion} + ' min'">90 min</td>
+                    <td>
+                        <span th:if="${p.destacada}" class="admin-badge admin-badge--green">Sí</span>
+                        <span th:unless="${p.destacada}" class="admin-badge admin-badge--gray">No</span>
+                    </td>
+                    <td class="admin-table__actions">
+                        <a th:href="@{/admin/peliculas/editar/{id}(id=${p.id})}" class="admin-btn admin-btn--sm" title="Editar">
+                            <i class="fas fa-pen"></i>
+                        </a>
+                        <form th:action="@{/admin/peliculas/eliminar/{id}(id=${p.id})}" method="post" style="display:inline"
+                              onsubmit="return confirm('¿Eliminar la película ' + this.dataset.titulo + '?');"
+                              th:attr="data-titulo=${p.titulo}">
+                            <button type="submit" class="admin-btn admin-btn--sm admin-btn--danger" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(peliculas)}">
+                    <td colspan="7" style="text-align:center; color: var(--text-secondary);">No hay películas en el catálogo</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>

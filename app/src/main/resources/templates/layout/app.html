@@ -16,23 +16,36 @@
                 <span class="navbar__logo">CineTrack</span>
             </a>
             <ul class="navbar__links">
-                <li><a th:href="@{/inicio}" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/inicio')} ? 'active'">Inicio</a></li>
-                <li><a th:href="@{/mi-lista}" th:classappend="${#strings.startsWith(#httpServletRequest.requestURI, '/mi-lista')} ? 'active'">Mi Lista</a></li>
+                <li><a th:href="@{/inicio}" th:classappend="${currentUri != null and #strings.startsWith(currentUri, '/inicio')} ? 'active'">Inicio</a></li>
+                <li><a th:href="@{/mi-lista}" th:classappend="${currentUri != null and #strings.startsWith(currentUri, '/mi-lista')} ? 'active'">Mi Lista</a></li>
             </ul>
         </div>
 
         <div class="navbar__right">
             <div class="navbar__profile">
-                <div class="navbar__avatar"
-                     th:classappend="'avatar--' + (${session.perfilActivo?.avatarUrl} ?: 'default')"
-                     th:text="${session.perfilActivo?.nombre != null} ? ${#strings.substring(session.perfilActivo.nombre, 0, 1)} : '?'">
+                <div th:if="${perfilActivo != null and perfilActivo.avatarUrl != null and #strings.startsWith(perfilActivo.avatarUrl, 'custom:')}"
+                     class="navbar__avatar" style="padding:0;">
+                    <img th:src="@{'/uploads/avatars/' + ${#strings.substringAfter(perfilActivo.avatarUrl, 'custom:')}}"
+                         alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;"/>
                 </div>
+                <div th:unless="${perfilActivo != null and perfilActivo.avatarUrl != null and #strings.startsWith(perfilActivo.avatarUrl, 'custom:')}"
+                     class="navbar__avatar"
+                     th:classappend="'avatar--' + (${perfilActivo != null ? perfilActivo.avatarUrl : 'default'} ?: 'default')"
+                     th:text="${perfilActivo != null and perfilActivo.nombre != null ? #strings.substring(perfilActivo.nombre, 0, 1) : '?'}">
+                </div>
+                <span class="navbar__profile-name" th:text="${perfilActivo != null ? perfilActivo.nombre : ''}"></span>
                 <div class="navbar__dropdown">
+                    <a th:if="${esAdmin}" th:href="@{/admin}" class="navbar__admin-link">
+                        <i class="fas fa-shield-alt"></i> Panel Admin
+                    </a>
                     <a th:href="@{/perfiles}">
                         <i class="fas fa-users"></i> Cambiar Perfil
                     </a>
-                    <a th:href="@{/perfiles}">
+                    <a th:href="@{/perfiles/gestionar}">
                         <i class="fas fa-user-cog"></i> Gestionar Perfiles
+                    </a>
+                    <a th:href="@{/cuenta}">
+                        <i class="fas fa-cog"></i> Mi Cuenta
                     </a>
                     <div class="navbar__dropdown-divider"></div>
                     <form th:action="@{/logout}" method="post" style="margin:0">

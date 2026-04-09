@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,8 @@ import com.cinetrack.service.GeneroService;
 import com.cinetrack.service.PerfilService;
 import com.cinetrack.service.UsuarioService;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -86,6 +90,8 @@ public class AuthController {
     @PostMapping("/registro/plan")
     public String planProcesar(@RequestParam String plan,
                                HttpSession session,
+                               HttpServletRequest request,
+                               HttpServletResponse response,
                                RedirectAttributes redirect) {
         String email = (String) session.getAttribute("registroEmail");
         String password = (String) session.getAttribute("registroPassword");
@@ -100,12 +106,15 @@ public class AuthController {
         session.removeAttribute("registroEmail");
         session.removeAttribute("registroPassword");
 
-        // Auto-login después de registrarse
+        // Auto-login después de registrarse — guardar contexto explícitamente (Spring Security 6)
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 usuario.getEmail(), null,
                 List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol()))
         );
-        SecurityContextHolder.getContext().setAuthentication(authToken);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authToken);
+        SecurityContextHolder.setContext(context);
+        new HttpSessionSecurityContextRepository().saveContext(context, request, response);
 
         return "redirect:/registro/perfil";
     }
@@ -136,7 +145,7 @@ public class AuthController {
             perfilService.guardarPreferenciasGenero(perfil, generos);
         }
 
-        session.setAttribute("perfilActivo", perfil);
+        session.setAttribute("perfilActivoId", perfil.getId());
         return "redirect:/inicio";
     }
 }

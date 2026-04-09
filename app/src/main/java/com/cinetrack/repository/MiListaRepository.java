@@ -16,4 +16,6 @@ public interface MiListaRepository extends JpaRepository<MiLista, Integer> {
     Optional<MiLista> findByPerfilIdAndPeliculaId(Integer perfilId, Integer peliculaId);
 
     boolean existsByPerfilIdAndPeliculaId(Integer perfilId, Integer peliculaId);
+
+    void deleteByPerfilId(Integer perfilId);
 }

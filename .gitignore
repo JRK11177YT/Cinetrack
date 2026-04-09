@@ -17,3 +17,5 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+# User-uploaded content (runtime data, not source code)
+app/uploads/
