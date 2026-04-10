@@ -4,12 +4,12 @@
       layout:decorate="~{layout/base}"
       lang="es">
 <head>
-    <title>Gestionar Perfiles</title>
+    <title>Gestionar Perfiles — CINETRACK</title>
 </head>
 <body>
 <div layout:fragment="body">
 
-    <!-- Account bar top-right -->
+    <!-- Account bar -->
     <div class="account-bar">
         <div class="account-bar__info">
             <i class="fas fa-user-circle"></i>
@@ -22,28 +22,35 @@
         </div>
     </div>
 
-    <div class="profiles-page animate-fadeIn">
-        <h1 class="profiles-page__title animate-fadeInUp">Gestionar Perfiles</h1>
+    <div class="profiles-page reveal">
+        <h1 class="profiles-page__title">Gestionar Perfiles</h1>
 
         <!-- Flash messages -->
-        <div th:if="${mensaje}" class="form-success" style="max-width:500px; margin:0 auto 24px;">
-            <i class="fas fa-check-circle"></i> <span th:text="${mensaje}">OK</span>
+        <div th:if="${mensaje}" class="alert alert-success d-flex align-items-center gap-2 py-2 mb-3" role="alert"
+             style="max-width:500px; margin:0 auto 24px;">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${mensaje}">OK</span>
         </div>
-        <div th:if="${error}" class="form-error" style="max-width:500px; margin:0 auto 24px;">
-            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error</span>
+        <div th:if="${error}" class="alert alert-danger d-flex align-items-center gap-2 py-2 mb-3" role="alert"
+             style="max-width:500px; margin:0 auto 24px;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}">Error</span>
         </div>
 
         <div class="profiles-grid">
-            <div th:each="perfil, iter : ${perfiles}" class="animate-fadeInUp"
-                 th:classappend="'delay-' + ${iter.index + 1}">
-                <a th:href="@{/perfiles/editar/{id}(id=${perfil.id})}" class="profile-card profile-card--edit" style="display:block;">
+            <div th:each="perfil, iter : ${perfiles}"
+                 class="reveal"
+                 th:style="'transition-delay:' + ${iter.index * 0.1} + 's'">
+                <a th:href="@{/perfiles/editar/{id}(id=${perfil.id})}" class="profile-card profile-card--edit d-block">
                     <div class="profile-card__avatar-wrap">
+                        <!-- Custom uploaded avatar -->
                         <div class="profile-card__avatar"
                              th:if="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
                              style="padding:0;">
                             <img th:src="@{'/uploads/avatars/' + ${#strings.substringAfter(perfil.avatarUrl, 'custom:')}}"
-                                 alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius: var(--radius);"/>
+                                 alt="Avatar" class="w-100 h-100" style="object-fit:cover; border-radius: var(--radius);"/>
                         </div>
+                        <!-- Preset avatar -->
                         <div class="profile-card__avatar"
                              th:unless="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
                              th:classappend="'avatar--' + ${perfil.avatarUrl ?: 'default'}">
@@ -58,7 +65,7 @@
             </div>
         </div>
 
-        <a th:href="@{/perfiles}" class="btn btn--outline animate-fadeInUp delay-4" style="display:inline-block;">
+        <a th:href="@{/perfiles}" class="btn-ct-outline d-inline-block mt-4 reveal" style="transition-delay: 0.5s;">
             Listo
         </a>
     </div>

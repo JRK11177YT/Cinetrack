@@ -4,14 +4,14 @@
       layout:decorate="~{layout/base}"
       lang="es">
 <head>
-    <title>Mi Cuenta</title>
+    <title>Mi Cuenta — CINETRACK</title>
 </head>
 <body>
 <div layout:fragment="body">
-    <div class="cuenta-page animate-fadeIn">
+    <div class="cuenta-page reveal">
 
         <!-- Header -->
-        <div class="cuenta-header animate-fadeInUp">
+        <div class="cuenta-header">
             <a th:href="@{/perfiles}" class="cuenta-header__back">
                 <i class="fas fa-arrow-left"></i>
             </a>
@@ -19,17 +19,21 @@
         </div>
 
         <!-- Flash messages -->
-        <div th:if="${mensaje}" class="form-success animate-fadeInUp" style="max-width:700px; margin:0 auto 24px;">
-            <i class="fas fa-check-circle"></i> <span th:text="${mensaje}">OK</span>
+        <div th:if="${mensaje}" class="alert alert-success d-flex align-items-center gap-2 py-2 mb-3" role="alert"
+             style="max-width:700px; margin:0 auto 24px;">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${mensaje}">OK</span>
         </div>
-        <div th:if="${error}" class="form-error animate-fadeInUp" style="max-width:700px; margin:0 auto 24px;">
-            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}">Error</span>
+        <div th:if="${error}" class="alert alert-danger d-flex align-items-center gap-2 py-2 mb-3" role="alert"
+             style="max-width:700px; margin:0 auto 24px;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}">Error</span>
         </div>
 
         <div class="cuenta-sections">
 
-            <!-- Sección: Información de cuenta -->
-            <section class="cuenta-section animate-fadeInUp delay-1">
+            <!-- Account Info -->
+            <section class="cuenta-section reveal" style="transition-delay: 0.1s;">
                 <h2 class="cuenta-section__title">
                     <i class="fas fa-user"></i> Información de la Cuenta
                 </h2>
@@ -45,13 +49,15 @@
                     </div>
                     <div class="cuenta-field">
                         <span class="cuenta-field__label">Rol</span>
-                        <span class="cuenta-field__value cuenta-field__badge" th:text="${usuario.rol}">USER</span>
+                        <span class="cuenta-field__value">
+                            <span class="badge bg-danger" th:text="${usuario.rol}">USER</span>
+                        </span>
                     </div>
                 </div>
             </section>
 
-            <!-- Sección: Suscripción -->
-            <section class="cuenta-section animate-fadeInUp delay-2">
+            <!-- Subscription -->
+            <section class="cuenta-section reveal" style="transition-delay: 0.2s;">
                 <h2 class="cuenta-section__title">
                     <i class="fas fa-crown"></i> Suscripción
                 </h2>
@@ -62,7 +68,7 @@
                                 <label th:each="p : ${ {'BASICO','ESTANDAR','PREMIUM'} }"
                                        class="cuenta-plan-option"
                                        th:classappend="${usuario.plan == p} ? 'cuenta-plan-option--active' : ''">
-                                    <input type="radio" name="plan" th:value="${p}" th:checked="${usuario.plan == p}"/>
+                                    <input type="radio" name="plan" th:value="${p}" th:checked="${usuario.plan == p}" class="d-none"/>
                                     <div class="cuenta-plan-option__content">
                                         <span class="cuenta-plan-option__name" th:text="${p}">PLAN</span>
                                         <span class="cuenta-plan-option__profiles"
@@ -76,7 +82,7 @@
                                     </div>
                                 </label>
                             </div>
-                            <button type="submit" class="btn btn--accent" style="margin-top:16px;">
+                            <button type="submit" class="btn-ct-accent mt-3">
                                 Cambiar Plan
                             </button>
                         </form>
@@ -84,39 +90,39 @@
                 </div>
             </section>
 
-            <!-- Sección: Cambiar contraseña -->
-            <section class="cuenta-section animate-fadeInUp delay-3">
+            <!-- Change Password -->
+            <section class="cuenta-section reveal" style="transition-delay: 0.3s;">
                 <h2 class="cuenta-section__title">
                     <i class="fas fa-lock"></i> Cambiar Contraseña
                 </h2>
                 <div class="cuenta-section__body">
                     <form th:action="@{/cuenta/password}" method="post" class="cuenta-password-form">
-                        <div class="form-group">
-                            <label for="passwordActual">Contraseña actual</label>
+                        <div class="ct-form-group">
+                            <label for="passwordActual" class="form-label">Contraseña actual</label>
                             <input type="password" id="passwordActual" name="passwordActual"
-                                   class="form-input" required autocomplete="current-password"/>
+                                   class="ct-input" required autocomplete="current-password"/>
                         </div>
-                        <div class="form-group">
-                            <label for="passwordNueva">Nueva contraseña</label>
+                        <div class="ct-form-group">
+                            <label for="passwordNueva" class="form-label">Nueva contraseña</label>
                             <input type="password" id="passwordNueva" name="passwordNueva"
-                                   class="form-input" required minlength="6" autocomplete="new-password"/>
+                                   class="ct-input" required minlength="6" autocomplete="new-password"/>
                         </div>
-                        <div class="form-group">
-                            <label for="passwordConfirmar">Confirmar nueva contraseña</label>
+                        <div class="ct-form-group">
+                            <label for="passwordConfirmar" class="form-label">Confirmar nueva contraseña</label>
                             <input type="password" id="passwordConfirmar" name="passwordConfirmar"
-                                   class="form-input" required minlength="6" autocomplete="new-password"/>
+                                   class="ct-input" required minlength="6" autocomplete="new-password"/>
                         </div>
-                        <button type="submit" class="btn btn--accent">Cambiar Contraseña</button>
+                        <button type="submit" class="btn-ct-accent">Cambiar Contraseña</button>
                     </form>
                 </div>
             </section>
 
-            <!-- Sección: Cerrar sesión -->
-            <section class="cuenta-section animate-fadeInUp delay-4">
-                <div class="cuenta-section__body" style="text-align:center; padding:32px;">
+            <!-- Logout -->
+            <section class="cuenta-section reveal" style="transition-delay: 0.4s;">
+                <div class="cuenta-section__body text-center py-4">
                     <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="btn btn--danger btn--lg">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        <button type="submit" class="btn-ct-danger btn-lg">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
                         </button>
                     </form>
                 </div>

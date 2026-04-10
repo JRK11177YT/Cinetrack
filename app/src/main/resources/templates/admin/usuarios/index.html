@@ -60,6 +60,14 @@
                         <a th:href="@{/admin/usuarios/editar/{id}(id=${u.id})}" class="admin-btn admin-btn--sm" title="Editar">
                             <i class="fas fa-pen"></i>
                         </a>
+                        <form th:if="${u.rol != 'ADMIN'}"
+                              th:action="@{/admin/usuarios/eliminar/{id}(id=${u.id})}" method="post" style="display:inline"
+                              onsubmit="return confirm('¿Eliminar el usuario ' + this.dataset.email + '? Se borrarán todos sus perfiles y datos.');"
+                              th:attr="data-email=${u.email}">
+                            <button type="submit" class="admin-btn admin-btn--sm admin-btn--danger" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(usuarios)}">

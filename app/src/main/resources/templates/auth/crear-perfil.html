@@ -1,78 +1,161 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/base}"
-      lang="es">
+      layout:decorate="~{layout/base}">
 <head>
-    <title>Crear Perfil</title>
+    <title>Crear Perfil — CINETRACK</title>
 </head>
 <body>
 <div layout:fragment="body">
+
     <div class="auth-page">
-        <div class="auth-page__bg"></div>
 
-        <header class="auth-header">
-            <span class="navbar__logo" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: #E50914; text-transform: uppercase;">
-                CineTrack
-            </span>
-        </header>
+        <div class="auth-bg">
+            <div class="auth-bg__gradient"></div>
+            <div class="auth-bg__particles" id="authParticles"></div>
+        </div>
 
-        <div class="auth-content">
-            <div class="auth-card animate-fadeInUp" style="max-width: 550px;">
-                <!-- Steps indicator -->
-                <div class="steps">
-                    <div class="step done"></div>
-                    <div class="step done"></div>
-                    <div class="step active"></div>
+        <div class="auth-topbar">
+            <a href="/" class="ct-brand">CINETRACK</a>
+        </div>
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-11 col-sm-10 col-md-8 col-lg-7 col-xl-6">
+
+                    <div class="auth-card" id="profileCard">
+                        <div class="auth-card__glow"></div>
+
+                        <!-- Progress steps — paso 3 activo -->
+                        <div class="auth-progress">
+                            <div class="auth-progress__step completed">
+                                <div class="auth-progress__dot"><i class="fas fa-check" style="font-size:.6rem;"></i></div>
+                                <span>Cuenta</span>
+                            </div>
+                            <div class="auth-progress__line" style="background:var(--accent);opacity:.5;"></div>
+                            <div class="auth-progress__step completed">
+                                <div class="auth-progress__dot"><i class="fas fa-check" style="font-size:.6rem;"></i></div>
+                                <span>Plan</span>
+                            </div>
+                            <div class="auth-progress__line" style="background:var(--accent);opacity:.5;"></div>
+                            <div class="auth-progress__step active">
+                                <div class="auth-progress__dot">3</div>
+                                <span>Perfil</span>
+                            </div>
+                        </div>
+
+                        <h1 class="auth-card__title">Personaliza tu perfil</h1>
+                        <p class="auth-card__subtitle">Ponle nombre e imagen a tu perfil</p>
+
+                        <form th:action="@{/registro/perfil}" method="post"
+                              enctype="multipart/form-data"
+                              id="profileForm" class="auth-form"
+                              onsubmit="return validateProfile(event)">
+
+                            <!-- Nombre del perfil -->
+                            <div class="auth-field">
+                                <div class="auth-field__input-wrap">
+                                    <i class="fas fa-user auth-field__icon"></i>
+                                    <input type="text" id="nombrePerfil" name="nombre"
+                                           class="auth-field__input"
+                                           placeholder=" "
+                                           required autofocus autocomplete="nickname">
+                                    <label for="nombrePerfil" class="auth-field__label">Nombre del perfil</label>
+                                </div>
+                            </div>
+
+                            <div class="auth-divider"></div>
+
+                            <!-- Avatar — solo imagen personalizada -->
+                            <div class="mb-4">
+                                <p class="profile-section-label">
+                                    Imagen de perfil <span>(opcional)</span>
+                                </p>
+                                <p class="genre-hint mb-3">Si no subes ninguna imagen se usara la inicial de tu nombre.</p>
+
+                                <div class="avatar-upload-zone" id="uploadZone">
+                                    <input type="file" name="avatarFile" id="avatarFile"
+                                           accept="image/jpeg,image/png,image/webp"
+                                           onchange="handleAvatarUpload(this)">
+                                    <img class="avatar-upload-preview" id="avatarPreview" alt="Vista previa">
+                                    <p class="avatar-upload-text" id="uploadText">
+                                        <i class="fas fa-camera" style="font-size:2rem;color:rgba(255,255,255,0.2);display:block;margin-bottom:10px;"></i>
+                                        <strong>Haz clic para subir una imagen</strong>
+                                        JPG, PNG o WEBP · Max 2 MB
+                                    </p>
+                                </div>
+                                <!-- Valor "initial" = mostrar inicial del nombre -->
+                                <input type="hidden" name="avatar" id="avatarInput" value="initial">
+                            </div>
+
+                            <div class="auth-divider"></div>
+
+                            <!-- Generos -->
+                            <div class="mb-4">
+                                <p class="profile-section-label">
+                                    Generos favoritos <span>(selecciona al menos uno)</span>
+                                </p>
+                                <div class="genre-grid" id="genreGrid">
+                                    <div th:each="genero : ${generos}"
+                                         class="genre-tag"
+                                         th:data-id="${genero.id}"
+                                         th:text="${genero.nombre}">Genero</div>
+                                </div>
+                                <input type="hidden" id="generosInput" name="_generosCsv">
+                                <p class="genre-hint" id="genreHint">Ningun genero seleccionado</p>
+                            </div>
+
+                            <button type="submit" class="auth-submit">
+                                <i class="fas fa-rocket auth-submit__arrow"></i>
+                                <span class="auth-submit__text">Empezar a ver</span>
+                            </button>
+
+                        </form>
+                    </div>
+
                 </div>
-
-                <h1 class="auth-card__title">Crea tu Perfil</h1>
-                <p class="auth-card__subtitle">
-                    Paso 3 de 3: Personaliza tu experiencia.
-                </p>
-
-                <form th:action="@{/registro/perfil}" method="post">
-                    <input type="hidden" name="avatar" id="avatarInput" value="avatar1">
-
-                    <!-- Nombre del perfil -->
-                    <div class="form-group">
-                        <label for="nombre">Nombre del Perfil</label>
-                        <input type="text" name="nombre" id="nombre" class="form-input"
-                               placeholder="Ej: Jorge" required maxlength="50" autofocus>
-                    </div>
-
-                    <!-- Avatar selection -->
-                    <div class="form-group">
-                        <label>Elige un Avatar</label>
-                        <div class="avatar-grid">
-                            <div th:each="av, iter : ${avatares}"
-                                 class="avatar-option"
-                                 th:classappend="'avatar--' + ${#strings.replace(av, 'avatar', '')} + (${iter.index == 0} ? ' selected' : '')"
-                                 th:data-avatar="${av}"
-                                 th:text="${#strings.substring(av, av.length() - 1, av.length())}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Genre preferences -->
-                    <div class="form-group">
-                        <label>¿Qué géneros te gustan? <span style="color: var(--text-muted);">(opcional)</span></label>
-                        <div class="genre-grid">
-                            <div th:each="genero : ${generos}" class="genre-tag">
-                                <input type="checkbox" name="generoIds" th:value="${genero.id}"
-                                       style="display: none;">
-                                <span th:text="${genero.nombre}">Género</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn--accent btn--full btn--lg" style="margin-top: 16px;">
-                        <i class="fas fa-play" style="margin-right: 8px;"></i> Empezar a Ver
-                    </button>
-                </form>
             </div>
         </div>
     </div>
+
+    <script>
+        function handleAvatarUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                alert('La imagen no puede superar 2 MB');
+                input.value = '';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('avatarPreview');
+                const uploadText = document.getElementById('uploadText');
+                const zone = document.getElementById('uploadZone');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                uploadText.innerHTML =
+                    '<strong style="color:var(--accent);">' + file.name + '</strong>' +
+                    '<span style="color:var(--text-muted);font-size:0.8rem;">Haz clic para cambiar</span>';
+                zone.classList.add('has-image');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function validateProfile(e) {
+            const selected = document.querySelectorAll('.genre-tag.selected');
+            if (selected.length === 0) {
+                e.preventDefault();
+                const hint = document.getElementById('genreHint');
+                hint.textContent = 'Selecciona al menos un genero para continuar';
+                hint.classList.add('error');
+                document.getElementById('genreGrid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+            return true;
+        }
+    </script>
+
 </div>
 </body>
 </html>

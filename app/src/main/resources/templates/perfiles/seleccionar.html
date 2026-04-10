@@ -4,12 +4,12 @@
       layout:decorate="~{layout/base}"
       lang="es">
 <head>
-    <title>¿Quién está viendo?</title>
+    <title>¿Quién está viendo? — CINETRACK</title>
 </head>
 <body>
 <div layout:fragment="body">
 
-    <!-- Account bar top-right -->
+    <!-- Account bar -->
     <div class="account-bar">
         <div class="account-bar__info">
             <i class="fas fa-user-circle"></i>
@@ -19,7 +19,7 @@
             <a th:href="@{/cuenta}" class="account-bar__link">
                 <i class="fas fa-cog"></i> Mi Cuenta
             </a>
-            <form th:action="@{/logout}" method="post" style="margin:0; display:inline;">
+            <form th:action="@{/logout}" method="post" class="d-inline m-0">
                 <button type="submit" class="account-bar__link account-bar__logout">
                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                 </button>
@@ -27,46 +27,50 @@
         </div>
     </div>
 
-    <div class="profiles-page animate-fadeIn">
-        <h1 class="profiles-page__title animate-fadeInUp">¿Quién está viendo?</h1>
+    <div class="profiles-scene">
+        <div class="profiles-scene__bg"></div>
 
-        <div class="profiles-grid">
-            <div th:each="perfil, iter : ${perfiles}" class="animate-fadeInUp"
-                 th:classappend="'delay-' + ${iter.index + 1}">
-                <form th:action="@{/perfiles/seleccionar/{id}(id=${perfil.id})}" method="post"
-                      style="display: inline;">
-                    <button type="submit" class="profile-card" style="background: none; border: none; cursor: pointer;">
-                        <div class="profile-card__avatar"
-                             th:if="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
-                             style="padding: 0;">
+        <h1 class="profiles-scene__title">¿Quién está viendo?</h1>
+
+        <div class="profiles-scene__grid">
+            <div th:each="perfil, iter : ${perfiles}"
+                 class="profile-item"
+                 th:style="'--delay:' + ${iter.index * 0.12} + 's'">
+                <form th:action="@{/perfiles/seleccionar/{id}(id=${perfil.id})}" method="post" class="d-inline">
+                    <button type="submit" class="profile-item__btn">
+                        <!-- Custom avatar -->
+                        <div class="profile-item__avatar"
+                             th:if="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}">
                             <img th:src="@{'/uploads/avatars/' + ${#strings.substringAfter(perfil.avatarUrl, 'custom:')}}"
-                                 alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius: var(--radius);"/>
+                                 alt="Avatar"/>
                         </div>
-                        <div class="profile-card__avatar"
+                        <!-- Preset avatar -->
+                        <div class="profile-item__avatar"
                              th:unless="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
                              th:classappend="'avatar--' + ${perfil.avatarUrl ?: 'default'}">
                             <span th:text="${#strings.substring(perfil.nombre, 0, 1)}">A</span>
                         </div>
-                        <div class="profile-card__name" th:text="${perfil.nombre}">Perfil</div>
+                        <span class="profile-item__name" th:text="${perfil.nombre}">Perfil</span>
                     </button>
                 </form>
             </div>
 
-            <!-- Añadir perfil -->
-            <div th:if="${puedeCrearMas}" class="animate-fadeInUp delay-4">
-                <a th:href="@{/registro/perfil}" class="profile-card profile-card--add" style="display: block;">
-                    <div class="profile-card__avatar">
+            <!-- Add profile -->
+            <div th:if="${puedeCrearMas}" class="profile-item" style="--delay: 0.5s;">
+                <a th:href="@{/registro/perfil}" class="profile-item__btn profile-item__btn--add">
+                    <div class="profile-item__avatar profile-item__avatar--add">
                         <i class="fas fa-plus"></i>
                     </div>
-                    <div class="profile-card__name">Añadir Perfil</div>
+                    <span class="profile-item__name">Añadir</span>
                 </a>
             </div>
         </div>
 
-        <a th:href="@{/perfiles/gestionar}" class="btn btn--outline animate-fadeInUp delay-4" style="display: inline-block;">
-            <i class="fas fa-pen" style="margin-right: 6px;"></i> Gestionar Perfiles
+        <a th:href="@{/perfiles/gestionar}" class="profiles-scene__manage">
+            <i class="fas fa-pen me-2"></i>Gestionar Perfiles
         </a>
     </div>
+
 </div>
 </body>
 </html>

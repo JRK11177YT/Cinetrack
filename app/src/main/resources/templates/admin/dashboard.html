@@ -69,6 +69,7 @@
                         <th>Género</th>
                         <th>Año</th>
                         <th>Destacada</th>
+                        <th>Novedad</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -82,13 +83,17 @@
                             <span th:unless="${p.destacada}" class="admin-badge admin-badge--gray">No</span>
                         </td>
                         <td>
+                            <span th:if="${p.novedad}" class="admin-badge admin-badge--red"><i class="fas fa-bolt me-1"></i>Sí</span>
+                            <span th:unless="${p.novedad}" class="admin-badge admin-badge--gray">No</span>
+                        </td>
+                        <td>
                             <a th:href="@{/admin/peliculas/editar/{id}(id=${p.id})}" class="admin-btn admin-btn--sm">
                                 <i class="fas fa-pen"></i>
                             </a>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(peliculasRecientes)}">
-                        <td colspan="5" style="text-align:center; color: var(--text-secondary);">No hay películas todavía</td>
+                        <td colspan="6" style="text-align:center; color: var(--text-secondary);">No hay películas todavía</td>
                     </tr>
                 </tbody>
             </table>

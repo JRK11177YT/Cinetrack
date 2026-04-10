@@ -60,6 +60,10 @@ public class HomeController {
             model.addAttribute("heroMovie", destacadas.get(0));
         }
 
+        // Novedades carousel (películas marcadas como novedad)
+        List<Pelicula> novedades = peliculaService.obtenerNovedades();
+        model.addAttribute("novedades", novedades);
+
         // Seguir viendo
         List<HistorialVisualizacion> seguirViendo = historialService.obtenerSeguirViendo(perfil.getId());
         model.addAttribute("seguirViendo", seguirViendo);

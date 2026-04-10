@@ -45,4 +45,8 @@ public class UsuarioService {
     public Usuario guardar(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
+
+    public void eliminar(Integer id) {
+        usuarioRepository.deleteById(id);
+    }
 }

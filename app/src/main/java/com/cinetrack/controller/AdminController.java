@@ -88,8 +88,10 @@ public class AdminController {
                                 @RequestParam Integer anio,
                                 @RequestParam(required = false) MultipartFile imagenFile,
                                 @RequestParam(required = false) MultipartFile videoFile,
+                                @RequestParam(required = false) MultipartFile heroFile,
                                 @RequestParam Integer generoId,
                                 @RequestParam(defaultValue = "false") boolean destacada,
+                                @RequestParam(defaultValue = "false") boolean novedad,
                                 RedirectAttributes redirect) {
         try {
             Pelicula p = new Pelicula();
@@ -98,6 +100,7 @@ public class AdminController {
             p.setDuracion(duracion);
             p.setAnio(anio);
             p.setDestacada(destacada);
+            p.setNovedad(novedad);
 
             if (imagenFile != null && !imagenFile.isEmpty()) {
                 String urlImagen = guardarArchivo(imagenFile, "imagenes", new String[]{"image/"}, 10L * 1024 * 1024);
@@ -106,6 +109,10 @@ public class AdminController {
             if (videoFile != null && !videoFile.isEmpty()) {
                 String urlVideo = guardarArchivo(videoFile, "videos", new String[]{"video/"}, 500L * 1024 * 1024);
                 if (urlVideo != null) p.setUrlVideo(urlVideo);
+            }
+            if (heroFile != null && !heroFile.isEmpty()) {
+                String urlHero = guardarArchivo(heroFile, "heroes", new String[]{"image/"}, 10L * 1024 * 1024);
+                if (urlHero != null) p.setUrlHero(urlHero);
             }
 
             Genero genero = generoService.obtenerPorId(generoId).orElseThrow();
@@ -136,8 +143,10 @@ public class AdminController {
                                      @RequestParam Integer anio,
                                      @RequestParam(required = false) MultipartFile imagenFile,
                                      @RequestParam(required = false) MultipartFile videoFile,
+                                     @RequestParam(required = false) MultipartFile heroFile,
                                      @RequestParam Integer generoId,
                                      @RequestParam(defaultValue = "false") boolean destacada,
+                                     @RequestParam(defaultValue = "false") boolean novedad,
                                      RedirectAttributes redirect) {
         try {
             Pelicula p = peliculaService.obtenerPorId(id).orElseThrow();
@@ -146,14 +155,22 @@ public class AdminController {
             p.setDuracion(duracion);
             p.setAnio(anio);
             p.setDestacada(destacada);
+            p.setNovedad(novedad);
 
             if (imagenFile != null && !imagenFile.isEmpty()) {
+                borrarArchivoUrl(p.getUrlImagen());
                 String urlImagen = guardarArchivo(imagenFile, "imagenes", new String[]{"image/"}, 10L * 1024 * 1024);
                 if (urlImagen != null) p.setUrlImagen(urlImagen);
             }
             if (videoFile != null && !videoFile.isEmpty()) {
+                borrarArchivoUrl(p.getUrlVideo());
                 String urlVideo = guardarArchivo(videoFile, "videos", new String[]{"video/"}, 500L * 1024 * 1024);
                 if (urlVideo != null) p.setUrlVideo(urlVideo);
+            }
+            if (heroFile != null && !heroFile.isEmpty()) {
+                borrarArchivoUrl(p.getUrlHero());
+                String urlHero = guardarArchivo(heroFile, "heroes", new String[]{"image/"}, 10L * 1024 * 1024);
+                if (urlHero != null) p.setUrlHero(urlHero);
             }
 
             Genero genero = generoService.obtenerPorId(generoId).orElseThrow();
@@ -171,8 +188,24 @@ public class AdminController {
     public String eliminarPelicula(@PathVariable Integer id, RedirectAttributes redirect) {
         Pelicula p = peliculaService.obtenerPorId(id).orElseThrow();
         String titulo = p.getTitulo();
+        borrarArchivoUrl(p.getUrlImagen());
+        borrarArchivoUrl(p.getUrlVideo());
+        borrarArchivoUrl(p.getUrlHero());
         peliculaService.eliminar(id);
         redirect.addFlashAttribute("mensaje", "Película \"" + titulo + "\" eliminada");
+        return "redirect:/admin/peliculas";
+    }
+
+    @PostMapping("/peliculas/eliminar-todas")
+    public String eliminarTodasPeliculas(RedirectAttributes redirect) {
+        List<Pelicula> peliculas = peliculaService.obtenerTodas();
+        for (Pelicula p : peliculas) {
+            borrarArchivoUrl(p.getUrlImagen());
+            borrarArchivoUrl(p.getUrlVideo());
+            borrarArchivoUrl(p.getUrlHero());
+        }
+        peliculaService.eliminarTodas();
+        redirect.addFlashAttribute("mensaje", "Se han eliminado " + peliculas.size() + " películas del catálogo");
         return "redirect:/admin/peliculas";
     }
 
@@ -224,6 +257,19 @@ public class AdminController {
 
         usuarioService.guardar(u);
         redirect.addFlashAttribute("mensaje", "Usuario actualizado correctamente");
+        return "redirect:/admin/usuarios";
+    }
+
+    @PostMapping("/usuarios/eliminar/{id}")
+    public String eliminarUsuario(@PathVariable Integer id, RedirectAttributes redirect) {
+        Usuario u = usuarioService.obtenerPorId(id).orElseThrow();
+        if ("ADMIN".equals(u.getRol())) {
+            redirect.addFlashAttribute("error", "No se puede eliminar un usuario administrador");
+            return "redirect:/admin/usuarios";
+        }
+        String email = u.getEmail();
+        usuarioService.eliminar(id);
+        redirect.addFlashAttribute("mensaje", "Usuario \"" + email + "\" eliminado correctamente");
         return "redirect:/admin/usuarios";
     }
 
@@ -295,6 +341,16 @@ public class AdminController {
     // ==========================================
 
     private static final String UPLOAD_BASE = "uploads/peliculas/";
+
+    private void borrarArchivoUrl(String url) {
+        if (url == null || url.isBlank()) return;
+        String relPath = url.startsWith("/") ? url.substring(1) : url;
+        try {
+            Files.deleteIfExists(Paths.get(relPath).toAbsolutePath());
+        } catch (IOException e) {
+            log.warn("No se pudo eliminar archivo: {}", url);
+        }
+    }
 
     private String guardarArchivo(MultipartFile file, String subfolder,
                                   String[] allowedPrefixes, long maxBytes) throws IOException {

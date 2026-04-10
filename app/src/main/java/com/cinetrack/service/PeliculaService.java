@@ -31,6 +31,10 @@ public class PeliculaService {
         return peliculaRepository.findByDestacadaTrue();
     }
 
+    public List<Pelicula> obtenerNovedades() {
+        return peliculaRepository.findByNovedadTrue();
+    }
+
     public List<Pelicula> buscarPorTitulo(String texto) {
         return peliculaRepository.findByTituloContainingIgnoreCase(texto);
     }
@@ -45,5 +49,9 @@ public class PeliculaService {
 
     public void eliminar(Integer id) {
         peliculaRepository.deleteById(id);
+    }
+
+    public void eliminarTodas() {
+        peliculaRepository.deleteAll();
     }
 }

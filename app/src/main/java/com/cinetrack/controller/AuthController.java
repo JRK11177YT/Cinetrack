@@ -1,6 +1,11 @@
 package com.cinetrack.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cinetrack.model.Genero;
@@ -123,19 +129,27 @@ public class AuthController {
     public String crearPerfilForm(Model model) {
         List<Genero> generos = generoService.obtenerTodos();
         model.addAttribute("generos", generos);
-        model.addAttribute("avatares", List.of("avatar1", "avatar2", "avatar3", "avatar4", "avatar5", "avatar6"));
         return "auth/crear-perfil";
     }
 
     @PostMapping("/registro/perfil")
     public String crearPerfilProcesar(@RequestParam String nombre,
-                                      @RequestParam String avatar,
+                                      @RequestParam(required = false) String avatar,
+                                      @RequestParam(required = false) MultipartFile avatarFile,
                                       @RequestParam(required = false) List<Integer> generoIds,
-                                      HttpSession session) {
+                                      HttpSession session) throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Usuario usuario = usuarioService.buscarPorEmail(email).orElseThrow();
 
-        Perfil perfil = perfilService.crearPerfil(usuario, nombre, avatar);
+        String avatarUrl = (avatar != null && !avatar.isBlank()) ? avatar : "initial";
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String filename = guardarAvatar(avatarFile);
+            if (filename != null) {
+                avatarUrl = "custom:" + filename;
+            }
+        }
+
+        Perfil perfil = perfilService.crearPerfil(usuario, nombre, avatarUrl);
 
         if (generoIds != null && !generoIds.isEmpty()) {
             List<Genero> generos = generoIds.stream()
@@ -147,5 +161,23 @@ public class AuthController {
 
         session.setAttribute("perfilActivoId", perfil.getId());
         return "redirect:/inicio";
+    }
+
+    private static final String UPLOAD_DIR = "uploads/avatars/";
+
+    private String guardarAvatar(MultipartFile file) throws IOException {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return null;
+        }
+        if (file.getSize() > 2 * 1024 * 1024) {
+            return null;
+        }
+        String ext = contentType.equals("image/png") ? ".png" : ".jpg";
+        String filename = UUID.randomUUID() + ext;
+        Path uploadPath = Paths.get(UPLOAD_DIR).toAbsolutePath();
+        Files.createDirectories(uploadPath);
+        file.transferTo(uploadPath.resolve(filename).toFile());
+        return filename;
     }
 }

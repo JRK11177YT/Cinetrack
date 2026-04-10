@@ -38,6 +38,9 @@ public class Pelicula {
     @Column(name = "url_video", length = 255)
     private String urlVideo;
 
+    @Column(name = "url_hero", length = 255)
+    private String urlHero;
+
     // ==========================================
     // RELACIÓN JPA (¡El secreto de un buen diseño!)
     // ==========================================
@@ -47,6 +50,9 @@ public class Pelicula {
 
     @Column(nullable = false)
     private Boolean destacada;
+
+    @Column(nullable = false)
+    private Boolean novedad;
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
@@ -60,6 +66,9 @@ public class Pelicula {
     public void prePersist() {
         if (this.destacada == null) {
             this.destacada = false;
+        }
+        if (this.novedad == null) {
+            this.novedad = false;
         }
         if (this.fechaCreacion == null) {
             this.fechaCreacion = LocalDateTime.now();
@@ -126,6 +135,14 @@ public class Pelicula {
         this.urlVideo = urlVideo;
     }
 
+    public String getUrlHero() {
+        return urlHero;
+    }
+
+    public void setUrlHero(String urlHero) {
+        this.urlHero = urlHero;
+    }
+
     public Genero getGenero() {
         return genero;
     }
@@ -140,6 +157,14 @@ public class Pelicula {
 
     public void setDestacada(Boolean destacada) {
         this.destacada = destacada;
+    }
+
+    public Boolean getNovedad() {
+        return novedad;
+    }
+
+    public void setNovedad(Boolean novedad) {
+        this.novedad = novedad;
     }
 
     public LocalDateTime getFechaCreacion() {

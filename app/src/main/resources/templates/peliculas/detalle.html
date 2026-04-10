@@ -27,8 +27,7 @@
     <!-- ====== DETAIL HERO ====== -->
     <section class="detail-hero">
         <div class="detail-hero__bg"
-             th:style="${pelicula.urlImagen != null} ? 'background-image: url(' + ${pelicula.urlImagen} + ')' : 'background-color: #1a1a2e'"
-             style="background-color: #1a1a2e;"></div>
+             th:style="${pelicula.urlHero != null} ? 'background-image: url(' + ${pelicula.urlHero} + ')' : (${pelicula.urlImagen != null} ? 'background-image: url(' + ${pelicula.urlImagen} + ')' : 'background-color: #1a1a2e')"></div>
         <div class="detail-hero__overlay"></div>
         <div class="detail-content animate-fadeInUp">
             <h1 class="detail-content__title" th:text="${pelicula.titulo}">Título</h1>
@@ -36,25 +35,21 @@
                 <span class="match">98% Para ti</span>
                 <span th:text="${pelicula.anio}">2024</span>
                 <span th:text="${pelicula.duracion} + ' min'">120 min</span>
-                <span class="hero__meta-badge" th:text="${pelicula.genero.nombre}">Género</span>
+                <span class="badge bg-danger" th:text="${pelicula.genero.nombre}">Género</span>
             </div>
             <p class="detail-content__description" th:text="${pelicula.descripcion}">Descripción...</p>
 
             <div class="detail-content__buttons">
-                <!-- Botón Reproducir: abre el reproductor si hay vídeo -->
-                <button class="btn btn--play" th:if="${pelicula.urlVideo != null}" onclick="abrirReproductor()">
+                <button class="btn-ct-play" th:if="${pelicula.urlVideo != null}" onclick="abrirReproductor()">
                     <i class="fas fa-play"></i>
                     <span th:if="${progreso != null && !progreso.completada}">Continuar</span>
                     <span th:unless="${progreso != null && !progreso.completada}">Reproducir</span>
                 </button>
-
-                <!-- Si no hay vídeo, mostrar botón deshabilitado -->
-                <button class="btn btn--play" th:if="${pelicula.urlVideo == null}" disabled
+                <button class="btn-ct-play" th:if="${pelicula.urlVideo == null}" disabled
                         style="opacity:0.5; cursor:not-allowed;">
                     <i class="fas fa-play"></i> Sin vídeo disponible
                 </button>
-
-                <button class="btn btn--icon"
+                <button class="btn-ct-icon"
                         th:classappend="${enMiLista} ? 'active' : ''"
                         data-milista-toggle
                         th:data-pelicula-id="${pelicula.id}"
@@ -70,8 +65,8 @@
                         30 min de 120 min
                     </span>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-bar__fill"
+                <div class="ct-progress">
+                    <div class="ct-progress__fill"
                          th:style="'width:' + ${(progreso.progresoSegundos * 100) / (pelicula.duracion * 60)} + '%'">
                     </div>
                 </div>
@@ -80,68 +75,30 @@
     </section>
 
     <!-- ====== MOVIE INFO SECTION ====== -->
-    <div class="page-section" style="padding-top: 32px;">
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 48px; max-width: 1000px;">
-            <div>
-                <h3 style="margin-bottom: 16px;">Sinopsis</h3>
-                <p style="color: var(--text-secondary); line-height: 1.7;" th:text="${pelicula.descripcion}">
+    <div class="page-section pt-4">
+        <div class="row" style="max-width: 1000px;">
+            <div class="col-lg-8 mb-4">
+                <h3 class="mb-3">Sinopsis</h3>
+                <p class="text-secondary lh-lg" th:text="${pelicula.descripcion}">
                     Descripción completa de la película.
                 </p>
             </div>
-            <div>
-                <p style="margin-bottom: 12px;">
+            <div class="col-lg-4">
+                <p class="mb-3">
                     <span style="color: var(--text-muted);">Género: </span>
                     <span th:text="${pelicula.genero.nombre}">Género</span>
                 </p>
-                <p style="margin-bottom: 12px;">
+                <p class="mb-3">
                     <span style="color: var(--text-muted);">Año: </span>
                     <span th:text="${pelicula.anio}">2024</span>
                 </p>
-                <p style="margin-bottom: 12px;">
+                <p class="mb-3">
                     <span style="color: var(--text-muted);">Duración: </span>
                     <span th:text="${pelicula.duracion} + ' minutos'">120 minutos</span>
                 </p>
             </div>
         </div>
     </div>
-
-    <style>
-        .video-player-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .video-player-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        .video-player-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            background: rgba(0,0,0,0.6);
-            border: none;
-            color: #fff;
-            font-size: 1.5rem;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s;
-        }
-        .video-player-close:hover {
-            background: rgba(229, 9, 20, 0.8);
-        }
-    </style>
 
     <script>
         function abrirReproductor() {

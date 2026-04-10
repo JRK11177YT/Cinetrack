@@ -121,13 +121,14 @@ public class PerfilController {
 
         // Avatar personalizado subido
         if (avatarFile != null && !avatarFile.isEmpty()) {
+            // Borrar imagen anterior si era personalizada
+            borrarAvatarAntiguo(perfil.getAvatarUrl());
             String filename = guardarAvatar(avatarFile);
             if (filename != null) {
                 perfil.setAvatarUrl("custom:" + filename);
             }
-        } else if (avatarPreset != null && !avatarPreset.isBlank()) {
-            perfil.setAvatarUrl(avatarPreset);
         }
+        // Si no se sube nada, se conserva el avatar actual
 
         perfilService.guardar(perfil);
         redirect.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
@@ -167,6 +168,16 @@ public class PerfilController {
     // ==========================================
 
     private static final String UPLOAD_DIR = "uploads/avatars/";
+
+    private void borrarAvatarAntiguo(String avatarUrl) {
+        if (avatarUrl == null || !avatarUrl.startsWith("custom:")) return;
+        String filename = avatarUrl.substring(7);
+        try {
+            Files.deleteIfExists(Paths.get(UPLOAD_DIR).toAbsolutePath().resolve(filename));
+        } catch (IOException e) {
+            // ignorar si no se puede borrar
+        }
+    }
 
     private String guardarAvatar(MultipartFile file) throws IOException {
         String contentType = file.getContentType();

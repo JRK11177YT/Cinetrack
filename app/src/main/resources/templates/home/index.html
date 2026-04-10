@@ -4,33 +4,105 @@
       layout:decorate="~{layout/app}"
       lang="es">
 <head>
-    <title>Inicio</title>
+    <title>Inicio — CINETRACK</title>
 </head>
 <body>
 <main layout:fragment="content">
 
-    <!-- ====== HERO BANNER ====== -->
-    <section class="hero" th:if="${heroMovie}">
-        <div class="hero__bg"
+    <!-- ====== NOVEDADES CAROUSEL ====== -->
+    <section class="ct-novedades" th:if="${!novedades.isEmpty()}" id="novedadesCarousel">
+        <!-- Slides -->
+        <div th:each="pelicula, iter : ${novedades}"
+             class="ct-novedades__slide"
+             th:classappend="${iter.index == 0 ? ' active' : ''}"
+             th:data-index="${iter.index}">
+
+            <!-- Background: video if available, else hero image, else poster -->
+            <div class="ct-novedades__bg">
+                <video th:if="${pelicula.urlVideo != null}"
+                       class="ct-novedades__video"
+                       muted playsinline preload="metadata"
+                       th:src="${pelicula.urlVideo}">
+                </video>
+                <div class="ct-novedades__img"
+                     th:unless="${pelicula.urlVideo != null}"
+                     th:style="${(pelicula.urlHero != null ? pelicula.urlHero : pelicula.urlImagen) != null
+                         ? 'background-image:url(' + (pelicula.urlHero != null ? pelicula.urlHero : pelicula.urlImagen) + ')'
+                         : 'background-color:#1a1a2e'}">
+                </div>
+            </div>
+
+            <!-- Overlay gradient -->
+            <div class="ct-novedades__overlay"></div>
+
+            <!-- Content -->
+            <div class="ct-novedades__content">
+                <div class="ct-novedades__badge">
+                    <i class="fas fa-bolt"></i> Novedad
+                </div>
+                <h1 class="ct-novedades__title" th:text="${pelicula.titulo}">Título</h1>
+                <div class="ct-novedades__meta">
+                    <span class="badge bg-danger" th:text="${pelicula.genero.nombre}">Género</span>
+                    <span th:text="${pelicula.anio}">2024</span>
+                    <span><i class="fas fa-clock me-1"></i><span th:text="${pelicula.duracion} + ' min'">120 min</span></span>
+                </div>
+                <p class="ct-novedades__desc" th:text="${pelicula.descripcion}">Descripción...</p>
+                <div class="ct-novedades__actions">
+                    <a th:href="@{/pelicula/{id}(id=${pelicula.id})}" class="btn-ct-play">
+                        <i class="fas fa-play"></i> Reproducir
+                    </a>
+                    <a th:href="@{/pelicula/{id}(id=${pelicula.id})}" class="btn-ct-info">
+                        <i class="fas fa-info-circle"></i> Más Info
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation arrows -->
+        <button class="ct-novedades__arrow ct-novedades__arrow--prev" id="novedadesPrev"
+                th:if="${novedades.size() > 1}">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="ct-novedades__arrow ct-novedades__arrow--next" id="novedadesNext"
+                th:if="${novedades.size() > 1}">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- Dots indicator -->
+        <div class="ct-novedades__dots" th:if="${novedades.size() > 1}">
+            <button th:each="pelicula, iter : ${novedades}"
+                    class="ct-novedades__dot"
+                    th:classappend="${iter.index == 0 ? ' active' : ''}"
+                    th:data-index="${iter.index}">
+            </button>
+        </div>
+
+        <!-- Progress bar (auto-advance timer) -->
+        <div class="ct-novedades__timer" th:if="${novedades.size() > 1}">
+            <div class="ct-novedades__timer-bar" id="novedadesTimer"></div>
+        </div>
+    </section>
+
+    <!-- ====== FALLBACK HERO (when no novedades, use first destacada) ====== -->
+    <section class="ct-hero" th:if="${novedades.isEmpty() and heroMovie != null}">
+        <div class="ct-hero__bg"
              th:style="${heroMovie.urlImagen != null ? 'background-image: linear-gradient(to right, rgba(0,0,0,0.85) 35%, rgba(0,0,0,0.25) 100%), url(' + heroMovie.urlImagen + '); background-size: cover; background-position: center top;' : 'background-color: #1a1a2e;'}">
         </div>
-        <div class="hero__overlay"></div>
-        <div class="hero__content animate-fadeInUp">
-            <div class="hero__badge">
-                <i class="fas fa-fire"></i> Destacada
-            </div>
-            <h1 class="hero__title" th:text="${heroMovie.titulo}">Título</h1>
-            <div class="hero__meta">
-                <span class="hero__meta-badge" th:text="${heroMovie.genero.nombre}">Género</span>
+        <div class="ct-hero__overlay"></div>
+        <div class="ct-hero__content">
+            <div class="ct-hero__badge"><i class="fas fa-fire"></i> Destacada</div>
+            <h1 class="ct-hero__title" th:text="${heroMovie.titulo}">Título</h1>
+            <div class="ct-hero__meta">
+                <span class="badge bg-danger" th:text="${heroMovie.genero.nombre}">Género</span>
                 <span th:text="${heroMovie.anio}">2024</span>
                 <span th:text="${heroMovie.duracion} + ' min'">120 min</span>
             </div>
-            <p class="hero__description" th:text="${heroMovie.descripcion}">Descripción...</p>
-            <div class="hero__buttons">
-                <a th:href="@{/pelicula/{id}(id=${heroMovie.id})}" class="btn btn--play">
+            <p class="ct-hero__description" th:text="${heroMovie.descripcion}">Descripción...</p>
+            <div class="ct-hero__buttons d-flex gap-2 flex-wrap">
+                <a th:href="@{/pelicula/{id}(id=${heroMovie.id})}" class="btn-ct-play">
                     <i class="fas fa-play"></i> Reproducir
                 </a>
-                <a th:href="@{/pelicula/{id}(id=${heroMovie.id})}" class="btn btn--info">
+                <a th:href="@{/pelicula/{id}(id=${heroMovie.id})}" class="btn-ct-info">
                     <i class="fas fa-info-circle"></i> Más Información
                 </a>
             </div>
@@ -41,9 +113,9 @@
     <div class="content-section">
 
         <!-- Seguir Viendo -->
-        <section class="movie-row" th:if="${!seguirViendo.isEmpty()}">
+        <section class="movie-row reveal" th:if="${!seguirViendo.isEmpty()}">
             <h2 class="movie-row__title">
-                <i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>
+                <i class="fas fa-history me-2" style="color: var(--accent);"></i>
                 Seguir Viendo
             </h2>
             <div class="movie-row__container">
@@ -52,7 +124,7 @@
                 </button>
                 <div class="movie-row__slider">
                     <div th:each="historial : ${seguirViendo}" class="movie-card">
-                        <a th:href="@{/pelicula/{id}(id=${historial.pelicula.id})}" style="display:block; width:100%; height:100%; text-decoration:none; color:inherit;">
+                        <a th:href="@{/pelicula/{id}(id=${historial.pelicula.id})}">
                             <div class="movie-card__poster"
                                  th:classappend="${historial.pelicula.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(historial.pelicula.genero.nombre, ' ', '-')) : ''}"
                                  th:style="${historial.pelicula.urlImagen != null ? 'background-image:url(' + historial.pelicula.urlImagen + ');background-size:cover;background-position:center;' : ''}">
@@ -73,9 +145,9 @@
         </section>
 
         <!-- Destacadas / Top CineTrack -->
-        <section class="movie-row" th:if="${!destacadas.isEmpty()}">
+        <section class="movie-row reveal" th:if="${!destacadas.isEmpty()}">
             <h2 class="movie-row__title">
-                <i class="fas fa-star" style="color: #F59E0B; margin-right: 8px;"></i>
+                <i class="fas fa-star me-2" style="color: #F59E0B;"></i>
                 Top CineTrack
             </h2>
             <div class="movie-row__container">
@@ -84,7 +156,7 @@
                 </button>
                 <div class="movie-row__slider">
                     <div th:each="pelicula : ${destacadas}" class="movie-card">
-                        <a th:href="@{/pelicula/{id}(id=${pelicula.id})}" style="display:block; width:100%; height:100%; text-decoration:none; color:inherit;">
+                        <a th:href="@{/pelicula/{id}(id=${pelicula.id})}">
                             <div class="movie-card__poster"
                                  th:classappend="${pelicula.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(pelicula.genero.nombre, ' ', '-')) : ''}"
                                  th:style="${pelicula.urlImagen != null ? 'background-image:url(' + pelicula.urlImagen + ');background-size:cover;background-position:center;' : ''}">
@@ -107,7 +179,7 @@
         </section>
 
         <!-- Películas por Género -->
-        <section th:each="entry : ${peliculasPorGenero}" class="movie-row">
+        <section th:each="entry : ${peliculasPorGenero}" class="movie-row reveal">
             <h2 class="movie-row__title" th:text="${entry.key.nombre}">Género</h2>
             <div class="movie-row__container">
                 <button class="movie-row__arrow movie-row__arrow--left">
@@ -115,7 +187,7 @@
                 </button>
                 <div class="movie-row__slider">
                     <div th:each="pelicula : ${entry.value}" class="movie-card">
-                        <a th:href="@{/pelicula/{id}(id=${pelicula.id})}" style="display:block; width:100%; height:100%; text-decoration:none; color:inherit;">
+                        <a th:href="@{/pelicula/{id}(id=${pelicula.id})}">
                             <div class="movie-card__poster"
                                  th:classappend="${pelicula.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(entry.key.nombre, ' ', '-')) : ''}"
                                  th:style="${pelicula.urlImagen != null ? 'background-image:url(' + pelicula.urlImagen + ');background-size:cover;background-position:center;' : ''}">
@@ -128,10 +200,10 @@
                                     <span th:text="${pelicula.duracion} + 'min'">120min</span>
                                 </div>
                                 <div class="movie-card__actions">
-                                    <button class="btn btn--icon" title="Reproducir">
+                                    <button class="btn-ct-icon" title="Reproducir">
                                         <i class="fas fa-play"></i>
                                     </button>
-                                    <button class="btn btn--icon" data-milista-toggle
+                                    <button class="btn-ct-icon" data-milista-toggle
                                             th:data-pelicula-id="${pelicula.id}"
                                             title="Mi Lista">
                                         <i class="fas fa-plus"></i>

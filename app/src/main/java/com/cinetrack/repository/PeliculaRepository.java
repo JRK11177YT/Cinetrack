@@ -18,4 +18,7 @@ public interface PeliculaRepository extends JpaRepository<Pelicula, Integer> {
 
     // SELECT * FROM peliculas WHERE titulo LIKE '%texto%'
     List<Pelicula> findByTituloContainingIgnoreCase(String texto);
+
+    // SELECT * FROM peliculas WHERE novedad = true
+    List<Pelicula> findByNovedadTrue();
 }
