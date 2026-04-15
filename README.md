@@ -1,12 +1,20 @@
 # CineTrack
 
-> Plataforma web de streaming de películas inspirada en Netflix.
+> Plataforma web de streaming de películas inspirada en Netflix.  
 > Proyecto transversal final DAW/DAM.
 
-## Estado actual — v0.3.0
+![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
+![Versión](https://img.shields.io/badge/versión-v0.4.0--dev-blue)
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen)
 
-El proyecto está en fase de desarrollo activo con el núcleo funcional completamente operativo.
-La aplicación arranca, se conecta a la base de datos y todas las funcionalidades principales funcionan end-to-end.
+> ⚠️ **Revisión intermedia** — Este repositorio refleja el estado actual del proyecto para revisión del profesorado. **No es la versión final de entrega.** El desarrollo continúa activamente en la rama `develop` y `feature/frontend-ui`.
+
+---
+
+## Estado actual — v0.4.0-dev
+
+El núcleo funcional está completamente operativo. La aplicación arranca, se conecta a la base de datos y todas las funcionalidades principales funcionan end-to-end. Se siguen añadiendo mejoras de UX y funcionalidades.
 
 ## Stack tecnológico
 
@@ -24,12 +32,14 @@ La aplicación arranca, se conecta a la base de datos y todas las funcionalidade
 
 - **Registro y autenticación** — Flujo completo: email → plan → creación de perfil → login automático
 - **Sistema de perfiles múltiples** — Hasta 5 perfiles por cuenta según el plan contratado
-- **Catálogo de películas** — 31 películas clásicas reales distribuidas en 6 géneros
+- **Catálogo de películas** — 31 películas clásicas reales con directores y valoraciones IMDb
 - **Cartelera de inicio** — Carousel de novedades + filas por género al estilo Netflix
+- **Buscador en tiempo real** — Búsqueda con sugerencias dinámicas vía AJAX
+- **Sugerencias personalizadas** — Basadas en géneros favoritos del perfil activo
 - **Historial de visualización** — Seguimiento de progreso por perfil (segundos vistos)
 - **Continuar viendo** — Sección dinámica en la home basada en el historial
 - **Mi Lista** — Guardado de películas por perfil con respuesta AJAX
-- **Página de detalle** — Información completa de cada película
+- **Página de detalle** — Director, valoración IMDb, video bajo demanda y películas relacionadas
 - **Panel de administración** — CRUD completo de películas, géneros y usuarios con subida de archivos
 - **Gestión de avatares** — Presets predefinidos o imagen personalizada (upload)
 - **Cuenta de usuario** — Cambio de contraseña y cambio de plan de suscripción
