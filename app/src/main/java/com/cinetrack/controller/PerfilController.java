@@ -5,7 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,12 +21,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.cinetrack.model.Genero;
 import com.cinetrack.model.Perfil;
+import com.cinetrack.model.PerfilGenero;
 import com.cinetrack.model.Usuario;
+import com.cinetrack.repository.PerfilGeneroRepository;
+import com.cinetrack.service.GeneroService;
 import com.cinetrack.service.PerfilService;
 import com.cinetrack.service.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 
 @Controller
 @RequestMapping("/perfiles")
@@ -32,11 +39,16 @@ public class PerfilController {
 
     private final PerfilService perfilService;
     private final UsuarioService usuarioService;
+    private final GeneroService generoService;
+    private final PerfilGeneroRepository perfilGeneroRepository;
 
     @Autowired
-    public PerfilController(PerfilService perfilService, UsuarioService usuarioService) {
+    public PerfilController(PerfilService perfilService, UsuarioService usuarioService,
+                            GeneroService generoService, PerfilGeneroRepository perfilGeneroRepository) {
         this.perfilService = perfilService;
         this.usuarioService = usuarioService;
+        this.generoService = generoService;
+        this.perfilGeneroRepository = perfilGeneroRepository;
     }
 
     @GetMapping
@@ -98,15 +110,23 @@ public class PerfilController {
             return "redirect:/perfiles/gestionar";
         }
 
+        List<Genero> todosGeneros = generoService.obtenerTodos();
+        Set<Integer> generosSeleccionados = perfilGeneroRepository.findByPerfilId(id)
+                .stream().map(pg -> pg.getGenero().getId()).collect(Collectors.toSet());
+
         model.addAttribute("perfil", perfil);
+        model.addAttribute("todosGeneros", todosGeneros);
+        model.addAttribute("generosSeleccionados", generosSeleccionados);
         return "perfiles/editar";
     }
 
+    @Transactional
     @PostMapping("/editar/{id}")
     public String editarPerfil(@PathVariable Integer id,
                                @RequestParam String nombre,
                                @RequestParam(required = false) String avatarPreset,
                                @RequestParam(required = false) MultipartFile avatarFile,
+                               @RequestParam(required = false) List<Integer> generos,
                                RedirectAttributes redirect,
                                HttpSession session) throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -131,6 +151,20 @@ public class PerfilController {
         // Si no se sube nada, se conserva el avatar actual
 
         perfilService.guardar(perfil);
+
+        // Actualizar géneros preferidos
+        perfilGeneroRepository.deleteByPerfilId(id);
+        if (generos != null) {
+            for (Integer generoId : generos) {
+                generoService.obtenerPorId(generoId).ifPresent(genero -> {
+                    PerfilGenero pg = new PerfilGenero();
+                    pg.setPerfil(perfil);
+                    pg.setGenero(genero);
+                    perfilGeneroRepository.save(pg);
+                });
+            }
+        }
+
         redirect.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
         return "redirect:/perfiles/gestionar";
     }

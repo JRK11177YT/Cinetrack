@@ -133,6 +133,179 @@ img { max-width: 100%; height: auto; }
     border-radius: 1px;
 }
 
+/* ── Navbar Search ──────────────────────── */
+.navbar-search {
+    display: flex;
+    align-items: center;
+}
+.navbar-search__wrap {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: var(--transition);
+    width: 180px;
+}
+.navbar-search__wrap:focus-within {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+    width: 240px;
+}
+.navbar-search__input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    padding: 6px 10px 6px 14px;
+    width: 100%;
+    font-family: var(--font-body);
+}
+.navbar-search__input::placeholder { color: var(--text-muted); }
+.navbar-search__btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+.navbar-search__btn:hover { color: var(--text-primary); }
+
+/* ── Search Page ───────────────────────── */
+.search-page__header {
+    margin-bottom: 36px;
+}
+.search-page__form {
+    margin-bottom: 16px;
+}
+.search-page__input-wrap {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius-lg);
+    max-width: 600px;
+    overflow: hidden;
+    transition: var(--transition);
+}
+.search-page__input-wrap:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(229,9,20,0.1);
+}
+.search-page__icon {
+    color: var(--text-muted);
+    padding: 0 14px;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+.search-page__input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    padding: 14px 8px;
+    font-family: var(--font-body);
+}
+.search-page__input::placeholder { color: var(--text-muted); }
+.search-page__btn {
+    background: var(--accent);
+    border: none;
+    color: #fff;
+    padding: 14px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-family: var(--font-body);
+    flex-shrink: 0;
+}
+.search-page__btn:hover { background: var(--accent-hover); }
+.search-page__summary {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin: 0;
+}
+.search-page__summary strong { color: var(--text-secondary); }
+
+/* ── Sugerencias Page ──────────────────── */
+.sugerencias-header {
+    margin-bottom: 36px;
+}
+.sugerencias-subtitle {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin: 4px 0 16px;
+}
+.sugerencias-generos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+/* Genre chips in profile edit form */
+.genre-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+.genre-chip {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-muted);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    user-select: none;
+}
+.genre-chip:hover {
+    border-color: rgba(229,9,20,0.4);
+    color: var(--text);
+}
+.genre-chip--selected {
+    background: rgba(229,9,20,0.15);
+    border-color: rgba(229,9,20,0.6);
+    color: var(--accent);
+}
+
+.sugerencias-genero-chip {
+    background: rgba(229,9,20,0.1);
+    border: 1px solid rgba(229,9,20,0.3);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.sugerencias-seccion {
+    margin-bottom: 48px;
+}
+.sugerencias-seccion__titulo {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sugerencias-seccion__count {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
 /* ── Profile Dropdown (navbar) ─────────── */
 .profile-dropdown .dropdown-toggle {
     background: none;

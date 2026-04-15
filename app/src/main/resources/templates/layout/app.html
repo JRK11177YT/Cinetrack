@@ -22,10 +22,29 @@
                        th:classappend="${currentUri != null and #strings.startsWith(currentUri, '/inicio')} ? 'active'">Inicio</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" th:href="@{/sugerencias}"
+                       th:classappend="${currentUri != null and #strings.startsWith(currentUri, '/sugerencias')} ? 'active'">Mis Sugerencias</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" th:href="@{/mi-lista}"
                        th:classappend="${currentUri != null and #strings.startsWith(currentUri, '/mi-lista')} ? 'active'">Mi Lista</a>
                 </li>
             </ul>
+
+            <!-- Buscador navbar -->
+            <form th:action="@{/buscar}" method="get" class="navbar-search me-3">
+                <div class="navbar-search__wrap">
+                    <input type="text"
+                           name="q"
+                           class="navbar-search__input"
+                           placeholder="Buscar..."
+                           autocomplete="off"
+                           maxlength="100"/>
+                    <button type="submit" class="navbar-search__btn" title="Buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
 
             <!-- Profile dropdown -->
             <div class="dropdown profile-dropdown">

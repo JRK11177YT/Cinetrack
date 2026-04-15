@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/app}"
+      lang="es">
+<head>
+    <title>Mis Sugerencias</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <div class="page-section">
+
+        <!-- Cabecera -->
+        <div class="sugerencias-header animate-fadeInUp">
+            <h1 class="page-section__title">
+                <i class="fas fa-star me-2" style="color:var(--accent);"></i>
+                Mis Sugerencias
+            </h1>
+            <p class="sugerencias-subtitle" th:if="${tienePreferencias}">
+                Películas seleccionadas según los géneros que le gustan a
+                <strong th:text="${perfil.nombre}">Perfil</strong>.
+            </p>
+
+            <!-- Chips de géneros preferidos -->
+            <div class="sugerencias-generos" th:if="${tienePreferencias}">
+                <span th:each="genero : ${generosPreferidos}" class="sugerencias-genero-chip">
+                    <i class="fas fa-tag me-1"></i>
+                    <span th:text="${genero.nombre}">Género</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- ── Tiene preferencias: mostrar por género ── -->
+        <div th:if="${tienePreferencias and !peliculasPorGenero.isEmpty()}">
+            <div th:each="entry : ${peliculasPorGenero}" class="sugerencias-seccion animate-fadeInUp">
+
+                <!-- Título del género -->
+                <h2 class="sugerencias-seccion__titulo">
+                    <span th:text="${entry.key.nombre}">Género</span>
+                    <span class="sugerencias-seccion__count" th:text="'(' + ${#lists.size(entry.value)} + ')'"></span>
+                </h2>
+
+                <!-- Grid de películas del género -->
+                <div class="movies-grid">
+                    <div th:each="pelicula : ${entry.value}" class="movie-card reveal" style="aspect-ratio: 2/3;">
+                        <a th:href="@{/pelicula/{id}(id=${pelicula.id})}">
+                            <div class="movie-card__poster"
+                                 th:classappend="${pelicula.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(pelicula.genero.nombre, ' ', '-')) : ''}"
+                                 th:style="${pelicula.urlImagen != null ? 'background-image:url(' + pelicula.urlImagen + ');background-size:cover;background-position:center;' : ''}">
+                                <span th:if="${pelicula.urlImagen == null}" th:text="${pelicula.titulo}">Título</span>
+                            </div>
+                            <div class="movie-card__overlay">
+                                <div class="movie-card__title" th:text="${pelicula.titulo}">Título</div>
+                                <div class="movie-card__info">
+                                    <span th:text="${pelicula.anio}">2024</span>
+                                    <span th:text="${pelicula.duracion} + 'min'">120min</span>
+                                </div>
+                                <div class="movie-card__actions">
+                                    <button class="btn-ct-icon" title="Reproducir">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="btn-ct-icon" data-milista-toggle
+                                            th:data-pelicula-id="${pelicula.id}"
+                                            title="Añadir a Mi Lista">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Sin preferencias configuradas ── -->
+        <div class="empty-state animate-fadeInUp" th:if="${!tienePreferencias}">
+            <i class="fas fa-sliders-h"></i>
+            <h3>Sin preferencias configuradas</h3>
+            <p>
+                Elige tus géneros favoritos y te recomendaremos películas a medida.
+            </p>
+            <a th:href="@{/perfiles/editar/{id}(id=${perfil.id})}" class="btn-ct-accent">
+                <i class="fas fa-edit me-2"></i> Configurar mis géneros
+            </a>
+        </div>
+
+    </div>
+
+</main>
+</body>
+</html>

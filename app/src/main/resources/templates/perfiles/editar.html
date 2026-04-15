@@ -65,6 +65,27 @@
                     </div>
                 </div>
 
+                <!-- Genres -->
+                <div class="ct-form-group">
+                    <label class="form-label">Géneros favoritos</label>
+                    <p class="text-secondary" style="font-size:0.82rem;margin-bottom:12px;">
+                        Selecciona los géneros que más te gustan para recibir sugerencias personalizadas.
+                    </p>
+                    <div class="genre-chips">
+                        <label th:each="genero : ${todosGeneros}"
+                               class="genre-chip"
+                               th:classappend="${generosSeleccionados.contains(genero.id)} ? ' genre-chip--selected'">
+                            <input type="checkbox" name="generos"
+                                   th:value="${genero.id}"
+                                   th:checked="${generosSeleccionados.contains(genero.id)}"
+                                   style="display:none;"
+                                   onchange="this.closest('.genre-chip').classList.toggle('genre-chip--selected', this.checked)"/>
+                            <i class="fas fa-tag me-1"></i>
+                            <span th:text="${genero.nombre}">Género</span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Actions -->
                 <div class="edit-profile__actions">
                     <button type="submit" class="btn-ct-accent btn-lg">
