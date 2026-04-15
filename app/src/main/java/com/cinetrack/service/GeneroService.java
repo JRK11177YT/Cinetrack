@@ -34,4 +34,8 @@ public class GeneroService {
     public Genero guardar(Genero genero) {
         return generoRepository.save(genero);
     }
+
+    public void eliminar(Integer id) {
+        generoRepository.deleteById(id);
+    }
 }

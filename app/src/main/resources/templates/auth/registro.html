@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Crear Cuenta — CINETRACK</title>
+</head>
+<body>
+<div layout:fragment="body">
+
+    <div class="auth-page">
+        <!-- Animated background -->
+        <div class="auth-bg">
+            <div class="auth-bg__gradient"></div>
+            <div class="auth-bg__particles" id="authParticles"></div>
+        </div>
+
+        <!-- Top bar -->
+        <div class="auth-topbar">
+            <a href="/" class="ct-brand">CINETRACK</a>
+        </div>
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+                    <div class="auth-card" id="registerCard">
+                        <div class="auth-card__glow"></div>
+
+                        <!-- Progress steps -->
+                        <div class="auth-progress">
+                            <div class="auth-progress__step active">
+                                <div class="auth-progress__dot">1</div>
+                                <span>Cuenta</span>
+                            </div>
+                            <div class="auth-progress__line"></div>
+                            <div class="auth-progress__step">
+                                <div class="auth-progress__dot">2</div>
+                                <span>Plan</span>
+                            </div>
+                            <div class="auth-progress__line"></div>
+                            <div class="auth-progress__step">
+                                <div class="auth-progress__dot">3</div>
+                                <span>Perfil</span>
+                            </div>
+                        </div>
+
+                        <h1 class="auth-card__title">Crea tu cuenta</h1>
+                        <p class="auth-card__subtitle">Empieza a disfrutar en segundos</p>
+
+                        <!-- Error Alert -->
+                        <div th:if="${error}" class="auth-alert auth-alert--error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span th:text="${error}">Error</span>
+                        </div>
+
+                        <!-- Register Form -->
+                        <form th:action="@{/registro}" method="post" autocomplete="on" class="auth-form">
+
+                            <div class="auth-field">
+                                <div class="auth-field__input-wrap">
+                                    <i class="fas fa-user auth-field__icon"></i>
+                                    <input type="text" id="nombre" name="nombre"
+                                           class="auth-field__input"
+                                           placeholder=" "
+                                           required autofocus autocomplete="name">
+                                    <label for="nombre" class="auth-field__label">Nombre completo</label>
+                                </div>
+                            </div>
+
+                            <div class="auth-field">
+                                <div class="auth-field__input-wrap">
+                                    <i class="fas fa-envelope auth-field__icon"></i>
+                                    <input type="email" id="email" name="email"
+                                           class="auth-field__input"
+                                           placeholder=" "
+                                           required autocomplete="email">
+                                    <label for="email" class="auth-field__label">Email</label>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="auth-field">
+                                        <div class="auth-field__input-wrap">
+                                            <i class="fas fa-lock auth-field__icon"></i>
+                                            <input type="password" id="password" name="password"
+                                                   class="auth-field__input"
+                                                   placeholder=" "
+                                                   required minlength="6" autocomplete="new-password">
+                                            <label for="password" class="auth-field__label">Contraseña</label>
+                                            <button type="button" class="toggle-password" aria-label="Mostrar">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="auth-field">
+                                        <div class="auth-field__input-wrap">
+                                            <i class="fas fa-shield-alt auth-field__icon"></i>
+                                            <input type="password" id="confirmPassword" name="passwordConfirm"
+                                                   class="auth-field__input"
+                                                   placeholder=" "
+                                                   required minlength="6" autocomplete="new-password">
+                                            <label for="confirmPassword" class="auth-field__label">Confirmar</label>
+                                            <button type="button" class="toggle-password" aria-label="Mostrar">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label class="auth-checkbox mt-2 mb-4">
+                                <input type="checkbox" name="terms" required>
+                                <span class="auth-checkbox__mark"></span>
+                                <span class="auth-checkbox__text">
+                                    Acepto los <a href="#" class="ct-link">términos</a>
+                                    y la <a href="#" class="ct-link">privacidad</a>
+                                </span>
+                            </label>
+
+                            <button type="submit" class="auth-submit">
+                                <span class="auth-submit__text">Continuar</span>
+                                <i class="fas fa-arrow-right auth-submit__arrow"></i>
+                            </button>
+                        </form>
+
+                        <div class="auth-footer">
+                            <span>¿Ya tienes cuenta?</span>
+                            <a th:href="@{/login}" class="auth-footer__link">Inicia sesión</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

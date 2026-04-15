@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/app}"
+      lang="es">
+<head>
+    <title th:text="${pelicula.titulo}">Película</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <!-- ====== VIDEO PLAYER (oculto hasta pulsar Reproducir) ====== -->
+    <div id="videoPlayerOverlay" class="video-player-overlay" style="display:none;"
+         th:if="${pelicula.urlVideo != null}">
+        <div class="video-player-wrapper">
+            <button class="video-player-close" onclick="cerrarReproductor()" title="Cerrar">
+                <i class="fas fa-times"></i>
+            </button>
+            <video id="videoPlayer" controls
+                   th:data-src="${pelicula.urlVideo}"
+                   style="width:100%; height:100%; background:#000;">
+                Tu navegador no soporta el reproductor de vídeo.
+            </video>
+        </div>
+    </div>
+
+    <!-- ====== DETAIL HERO ====== -->
+    <section class="detail-hero">
+        <div class="detail-hero__bg"
+             th:style="${pelicula.urlHero != null} ? 'background-image: url(' + ${pelicula.urlHero} + ')' : (${pelicula.urlImagen != null} ? 'background-image: url(' + ${pelicula.urlImagen} + ')' : 'background-color: #1a1a2e')"></div>
+        <div class="detail-hero__overlay"></div>
+        <div class="detail-content animate-fadeInUp">
+            <h1 class="detail-content__title" th:text="${pelicula.titulo}">Título</h1>
+            <div class="detail-content__meta">
+                <span class="match">98% Para ti</span>
+                <span th:text="${pelicula.anio}">2024</span>
+                <span th:text="${pelicula.duracion} + ' min'">120 min</span>
+                <span class="badge bg-danger" th:text="${pelicula.genero.nombre}">Género</span>
+            </div>
+
+            <div class="detail-content__buttons">
+                <button class="btn-ct-play" th:if="${pelicula.urlVideo != null}" onclick="abrirReproductor()">
+                    <i class="fas fa-play"></i>
+                    <span th:if="${progreso != null && !progreso.completada}">Continuar</span>
+                    <span th:unless="${progreso != null && !progreso.completada}">Reproducir</span>
+                </button>
+                <button class="btn-ct-play" th:if="${pelicula.urlVideo == null}" disabled
+                        style="opacity:0.5; cursor:not-allowed;">
+                    <i class="fas fa-play"></i> Sin vídeo disponible
+                </button>
+                <button class="btn-ct-icon"
+                        th:classappend="${enMiLista} ? 'active' : ''"
+                        data-milista-toggle
+                        th:data-pelicula-id="${pelicula.id}"
+                        title="Mi Lista">
+                    <i th:class="${enMiLista} ? 'fas fa-check' : 'fas fa-plus'"></i>
+                </button>
+            </div>
+
+            <!-- Progress bar if watching -->
+            <div class="detail-content__progress" th:if="${progreso != null && !progreso.completada}">
+                <div class="detail-content__progress-label">
+                    <span th:text="${progreso.progresoSegundos / 60} + ' min de ' + ${pelicula.duracion} + ' min'">
+                        30 min de 120 min
+                    </span>
+                </div>
+                <div class="ct-progress">
+                    <div class="ct-progress__fill"
+                         th:style="'width:' + ${(progreso.progresoSegundos * 100) / (pelicula.duracion * 60)} + '%'">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== MOVIE INFO SECTION ====== -->
+    <div class="page-section pt-4">
+        <div class="row" style="max-width: 1000px;">
+            <div class="col-lg-8 mb-4">
+                <h3 class="mb-3">Sinopsis</h3>
+                <p class="text-secondary lh-lg" th:text="${pelicula.descripcion}">
+                    Descripción completa de la película.
+                </p>
+            </div>
+            <div class="col-lg-4">
+                <p class="mb-3" th:if="${pelicula.director != null and pelicula.director != ''}">
+                    <span style="color: var(--text-muted);">Director: </span>
+                    <span th:text="${pelicula.director}">Director</span>
+                </p>
+                <p class="mb-3">
+                    <span style="color: var(--text-muted);">Género: </span>
+                    <span th:text="${pelicula.genero.nombre}">Género</span>
+                </p>
+                <p class="mb-3">
+                    <span style="color: var(--text-muted);">Año: </span>
+                    <span th:text="${pelicula.anio}">2024</span>
+                </p>
+                <p class="mb-3">
+                    <span style="color: var(--text-muted);">Duración: </span>
+                    <span th:text="${pelicula.duracion} + ' minutos'">120 minutos</span>
+                </p>
+                <p class="mb-3" th:if="${pelicula.valoracionImdb != null}">
+                    <img th:src="@{/img/icons/imdb.png}" alt="IMDb"
+                         style="height:20px; vertical-align:middle; margin-right:6px;"/>
+                    <span style="color: #f5c518; font-weight: 700;"
+                          th:text="${pelicula.valoracionImdb} + ' / 10'">7.5 / 10</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== PELÍCULAS RELACIONADAS ====== -->
+    <div class="page-section pt-0" th:if="${relacionadas != null and !relacionadas.isEmpty()}">
+        <h3 class="mb-4" th:text="'Más de ' + ${pelicula.genero.nombre}">Más películas</h3>
+        <div class="movies-grid">
+            <div th:each="rel : ${relacionadas}" class="movie-card reveal" style="aspect-ratio: 2/3;">
+                <a th:href="@{/pelicula/{id}(id=${rel.id})}">
+                    <div class="movie-card__poster"
+                         th:classappend="${rel.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(rel.genero.nombre, ' ', '-')) : ''}"
+                         th:style="${rel.urlImagen != null ? 'background-image:url(' + rel.urlImagen + ');background-size:cover;background-position:center;' : ''}">
+                        <span th:if="${rel.urlImagen == null}" th:text="${rel.titulo}">Título</span>
+                    </div>
+                    <div class="movie-card__overlay">
+                        <div class="movie-card__title" th:text="${rel.titulo}">Título</div>
+                        <div class="movie-card__info">
+                            <span th:text="${rel.anio}">2024</span>
+                            <span th:text="${rel.duracion} + 'min'">120min</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirReproductor() {
+            var overlay = document.getElementById('videoPlayerOverlay');
+            var video = document.getElementById('videoPlayer');
+            if (overlay && video) {
+                if (!video.src) {
+                    video.src = video.dataset.src;
+                }
+                overlay.style.display = 'flex';
+                video.play();
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function cerrarReproductor() {
+            var overlay = document.getElementById('videoPlayerOverlay');
+            var video = document.getElementById('videoPlayer');
+            if (overlay && video) {
+                video.pause();
+                video.src = '';
+                overlay.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') cerrarReproductor();
+        });
+    </script>
+
+</main>
+</body>
+</html>

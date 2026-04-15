@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Elige tu Plan — CINETRACK</title>
+</head>
+<body>
+<div layout:fragment="body">
+
+    <div class="auth-page">
+        <!-- Animated background -->
+        <div class="auth-bg">
+            <div class="auth-bg__gradient"></div>
+            <div class="auth-bg__particles" id="authParticles"></div>
+        </div>
+
+        <!-- Top bar -->
+        <div class="auth-topbar">
+            <a href="/" class="ct-brand">CINETRACK</a>
+        </div>
+
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10 col-xl-9">
+
+                    <div class="auth-card" style="max-width: 860px; margin: 0 auto 48px; padding: 48px 40px;">
+                        <div class="auth-card__glow"></div>
+
+                        <!-- Progress steps -->
+                        <div class="auth-progress">
+                            <div class="auth-progress__step completed">
+                                <div class="auth-progress__dot"><i class="fas fa-check" style="font-size:0.7rem;"></i></div>
+                                <span>Cuenta</span>
+                            </div>
+                            <div class="auth-progress__line" style="background: var(--accent); opacity:0.5;"></div>
+                            <div class="auth-progress__step active">
+                                <div class="auth-progress__dot">2</div>
+                                <span>Plan</span>
+                            </div>
+                            <div class="auth-progress__line"></div>
+                            <div class="auth-progress__step">
+                                <div class="auth-progress__dot">3</div>
+                                <span>Perfil</span>
+                            </div>
+                        </div>
+
+                        <h1 class="auth-card__title text-center">Elige tu plan</h1>
+                        <p class="auth-card__subtitle text-center mb-4">Cambia o cancela cuando quieras</p>
+
+                        <!-- Plan Form -->
+                        <form th:action="@{/registro/plan}" method="post" id="planForm">
+
+                            <div class="plan-grid">
+
+                                <!-- Plan Básico -->
+                                <div class="plan-card" data-plan="BASICO" onclick="selectPlan(this)">
+                                    <div class="plan-card__name">Básico</div>
+                                    <div class="plan-card__price">
+                                        <span class="plan-card__currency">€</span>
+                                        <span class="plan-card__amount">5</span>
+                                    </div>
+                                    <div class="plan-card__period">/mes</div>
+                                    <ul class="plan-card__features">
+                                        <li><i class="fas fa-check"></i> 1 perfil</li>
+                                        <li><i class="fas fa-check"></i> Calidad 720p</li>
+                                        <li><i class="fas fa-check"></i> 1 dispositivo</li>
+                                        <li><i class="fas fa-check"></i> Catálogo básico</li>
+                                    </ul>
+                                    <input type="radio" name="plan" value="BASICO" id="planBasico" class="d-none">
+                                </div>
+
+                                <!-- Plan Estándar -->
+                                <div class="plan-card selected" data-plan="ESTANDAR" onclick="selectPlan(this)">
+                                    <div class="plan-card__popular">
+                                        <i class="fas fa-star me-1"></i>Popular
+                                    </div>
+                                    <div class="plan-card__name">Estándar</div>
+                                    <div class="plan-card__price">
+                                        <span class="plan-card__currency">€</span>
+                                        <span class="plan-card__amount">10</span>
+                                    </div>
+                                    <div class="plan-card__period">/mes</div>
+                                    <ul class="plan-card__features">
+                                        <li><i class="fas fa-check"></i> 3 perfiles</li>
+                                        <li><i class="fas fa-check"></i> Calidad 1080p</li>
+                                        <li><i class="fas fa-check"></i> 2 dispositivos</li>
+                                        <li><i class="fas fa-check"></i> Catálogo completo</li>
+                                        <li><i class="fas fa-check"></i> Descargas</li>
+                                    </ul>
+                                    <input type="radio" name="plan" value="ESTANDAR" id="planEstandar" class="d-none" checked>
+                                </div>
+
+                                <!-- Plan Premium -->
+                                <div class="plan-card" data-plan="PREMIUM" onclick="selectPlan(this)">
+                                    <div class="plan-card__name">Premium</div>
+                                    <div class="plan-card__price">
+                                        <span class="plan-card__currency">€</span>
+                                        <span class="plan-card__amount">15</span>
+                                    </div>
+                                    <div class="plan-card__period">/mes</div>
+                                    <ul class="plan-card__features">
+                                        <li><i class="fas fa-check"></i> 5 perfiles</li>
+                                        <li><i class="fas fa-check"></i> Calidad 4K + HDR</li>
+                                        <li><i class="fas fa-check"></i> 4 dispositivos</li>
+                                        <li><i class="fas fa-check"></i> Catálogo completo</li>
+                                        <li><i class="fas fa-check"></i> Descargas</li>
+                                        <li><i class="fas fa-check"></i> Audio espacial</li>
+                                    </ul>
+                                    <input type="radio" name="plan" value="PREMIUM" id="planPremium" class="d-none">
+                                </div>
+
+                            </div>
+
+                            <button type="submit" class="auth-submit w-100 mt-2">
+                                <span class="auth-submit__text">Continuar</span>
+                                <i class="fas fa-arrow-right auth-submit__arrow"></i>
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectPlan(card) {
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            const radio = card.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+        }
+    </script>
+
+</div>
+</body>
+</html>

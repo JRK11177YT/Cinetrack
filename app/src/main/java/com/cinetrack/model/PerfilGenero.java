@@ -8,26 +8,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-/**
- * Representa las preferencias de géneros de cada usuario.
- */
 @Entity
-@Table(name = "usuario_generos")
-public class UsuarioGenero {
+@Table(name = "perfil_generos")
+public class PerfilGenero {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "perfil_id", nullable = false)
+    private Perfil perfil;
 
     @ManyToOne
     @JoinColumn(name = "genero_id", nullable = false)
     private Genero genero;
 
-    public UsuarioGenero() {
+    public PerfilGenero() {
     }
 
     // ==========================================
@@ -42,12 +39,12 @@ public class UsuarioGenero {
         this.id = id;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Perfil getPerfil() {
+        return perfil;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
     }
 
     public Genero getGenero() {

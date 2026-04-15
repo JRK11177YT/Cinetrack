@@ -1,37 +1,62 @@
 package com.cinetrack.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import com.cinetrack.model.HistorialVisualizacion;
 import com.cinetrack.model.Pelicula;
+import com.cinetrack.model.Perfil;
+import com.cinetrack.service.HistorialVisualizacionService;
+import com.cinetrack.service.MiListaService;
 import com.cinetrack.service.PeliculaService;
+import com.cinetrack.service.PerfilService;
+
+import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/peliculas")
 public class PeliculaController {
 
     private final PeliculaService peliculaService;
+    private final MiListaService miListaService;
+    private final HistorialVisualizacionService historialService;
+    private final PerfilService perfilService;
 
-    // Inyectamos el servicio, NUNCA el repositorio directamente
     @Autowired
-    public PeliculaController(PeliculaService peliculaService) {
+    public PeliculaController(PeliculaService peliculaService, MiListaService miListaService,
+                              HistorialVisualizacionService historialService, PerfilService perfilService) {
         this.peliculaService = peliculaService;
+        this.miListaService = miListaService;
+        this.historialService = historialService;
+        this.perfilService = perfilService;
     }
 
-    @GetMapping
-    public String listarPeliculas(Model model) {
-        // 1. Pedimos todas las películas a la base de datos
-        List<Pelicula> listaPeliculas = peliculaService.obtenerTodas();
-        
-        // 2. Metemos las películas en la "mochila" (Model) para llevárnoslas al HTML
-        model.addAttribute("peliculas", listaPeliculas);
-        
-        // 3. Devolvemos el nombre del archivo HTML (sin el .html) que Spring debe renderizar
-        return "peliculas/index";
+    @GetMapping("/pelicula/{id}")
+    public String detalle(@PathVariable Integer id, Model model, HttpSession session) {
+        Integer perfilId = (Integer) session.getAttribute("perfilActivoId");
+        Perfil perfil = perfilService.obtenerPorId(perfilId).orElseThrow();
+        Pelicula pelicula = peliculaService.obtenerPorId(id).orElseThrow();
+
+        boolean enMiLista = miListaService.estaEnMiLista(perfil.getId(), id);
+        HistorialVisualizacion progreso = historialService.obtenerProgreso(perfil.getId(), id).orElse(null);
+
+        List<Pelicula> relacionadas = peliculaService.obtenerPorGenero(pelicula.getGenero().getId())
+                .stream()
+                .filter(p -> !p.getId().equals(id))
+                .limit(6)
+                .collect(Collectors.toList());
+
+        model.addAttribute("pelicula", pelicula);
+        model.addAttribute("enMiLista", enMiLista);
+        model.addAttribute("progreso", progreso);
+        model.addAttribute("perfil", perfil);
+        model.addAttribute("relacionadas", relacionadas);
+
+        return "peliculas/detalle";
     }
 }

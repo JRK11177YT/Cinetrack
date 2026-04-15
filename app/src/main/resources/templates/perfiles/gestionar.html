@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}"
+      lang="es">
+<head>
+    <title>Gestionar Perfiles — CINETRACK</title>
+</head>
+<body>
+<div layout:fragment="body">
+
+    <!-- Account bar -->
+    <div class="account-bar">
+        <div class="account-bar__info">
+            <i class="fas fa-user-circle"></i>
+            <span th:text="${emailCuenta}">email@ejemplo.com</span>
+        </div>
+        <div class="account-bar__actions">
+            <a th:href="@{/perfiles}" class="account-bar__link">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <div class="profiles-page reveal">
+        <h1 class="profiles-page__title">Gestionar Perfiles</h1>
+
+        <!-- Flash messages -->
+        <div th:if="${mensaje}" class="alert alert-success d-flex align-items-center gap-2 py-2 mb-3" role="alert"
+             style="max-width:500px; margin:0 auto 24px;">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${mensaje}">OK</span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger d-flex align-items-center gap-2 py-2 mb-3" role="alert"
+             style="max-width:500px; margin:0 auto 24px;">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}">Error</span>
+        </div>
+
+        <div class="profiles-grid">
+            <div th:each="perfil, iter : ${perfiles}"
+                 class="reveal"
+                 th:style="'transition-delay:' + ${iter.index * 0.1} + 's'">
+                <a th:href="@{/perfiles/editar/{id}(id=${perfil.id})}" class="profile-card profile-card--edit d-block">
+                    <div class="profile-card__avatar-wrap">
+                        <!-- Custom uploaded avatar -->
+                        <div class="profile-card__avatar"
+                             th:if="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
+                             style="padding:0;">
+                            <img th:src="@{'/uploads/avatars/' + ${#strings.substringAfter(perfil.avatarUrl, 'custom:')}}"
+                                 alt="Avatar" class="w-100 h-100" style="object-fit:cover; border-radius: var(--radius);"/>
+                        </div>
+                        <!-- Preset avatar -->
+                        <div class="profile-card__avatar"
+                             th:unless="${perfil.avatarUrl != null and #strings.startsWith(perfil.avatarUrl, 'custom:')}"
+                             th:classappend="'avatar--' + ${perfil.avatarUrl ?: 'default'}">
+                            <span th:text="${#strings.substring(perfil.nombre, 0, 1)}">A</span>
+                        </div>
+                        <div class="profile-card__edit-icon">
+                            <i class="fas fa-pen"></i>
+                        </div>
+                    </div>
+                    <div class="profile-card__name" th:text="${perfil.nombre}">Perfil</div>
+                </a>
+            </div>
+        </div>
+
+        <a th:href="@{/perfiles}" class="btn-ct-outline d-inline-block mt-4 reveal" style="transition-delay: 0.5s;">
+            Listo
+        </a>
+    </div>
+</div>
+</body>
+</html>

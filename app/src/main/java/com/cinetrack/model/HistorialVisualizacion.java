@@ -20,12 +20,10 @@ public class HistorialVisualizacion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // A qué usuario pertenece este progreso
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    @JoinColumn(name = "perfil_id", nullable = false)
+    private Perfil perfil;
 
-    // Qué película estaba viendo
     @ManyToOne
     @JoinColumn(name = "pelicula_id", nullable = false)
     private Pelicula pelicula;
@@ -67,12 +65,12 @@ public class HistorialVisualizacion {
         this.id = id;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Perfil getPerfil() {
+        return perfil;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
     }
 
     public Pelicula getPelicula() {

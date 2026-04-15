@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/app}"
+      lang="es">
+<head>
+    <title>Buscar</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <div class="page-section">
+
+        <!-- Barra de búsqueda en la página -->
+        <div class="search-page__header animate-fadeInUp">
+            <form th:action="@{/buscar}" method="get" class="search-page__form">
+                <div class="search-page__input-wrap">
+                    <i class="fas fa-search search-page__icon"></i>
+                    <input type="text"
+                           name="q"
+                           class="search-page__input"
+                           th:value="${query}"
+                           placeholder="Busca una película..."
+                           autofocus
+                           autocomplete="off"
+                           maxlength="100"/>
+                    <button type="submit" class="search-page__btn">Buscar</button>
+                </div>
+            </form>
+
+            <!-- Resumen de resultados -->
+            <p class="search-page__summary" th:if="${!query.isEmpty()}">
+                <span th:if="${totalResultados > 0}">
+                    <strong th:text="${totalResultados}">0</strong>
+                    resultado<span th:if="${totalResultados != 1}">s</span>
+                    para "<em th:text="${query}">query</em>"
+                </span>
+                <span th:if="${totalResultados == 0}">
+                    No se encontraron resultados para "<em th:text="${query}">query</em>"
+                </span>
+            </p>
+        </div>
+
+        <!-- Grid de resultados -->
+        <div class="movies-grid" th:if="${!resultados.isEmpty()}">
+            <div th:each="pelicula : ${resultados}" class="movie-card reveal" style="aspect-ratio: 2/3;">
+                <a th:href="@{/pelicula/{id}(id=${pelicula.id})}">
+                    <div class="movie-card__poster"
+                         th:classappend="${pelicula.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(pelicula.genero.nombre, ' ', '-')) : ''}"
+                         th:style="${pelicula.urlImagen != null ? 'background-image:url(' + pelicula.urlImagen + ');background-size:cover;background-position:center;' : ''}">
+                        <span th:if="${pelicula.urlImagen == null}" th:text="${pelicula.titulo}">Título</span>
+                    </div>
+                    <div class="movie-card__overlay">
+                        <div class="movie-card__title" th:text="${pelicula.titulo}">Título</div>
+                        <div class="movie-card__info">
+                            <span th:text="${pelicula.anio}">2024</span>
+                            <span th:text="${pelicula.duracion} + 'min'">120min</span>
+                        </div>
+                        <div class="movie-card__actions">
+                            <button class="btn-ct-icon" title="Reproducir">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="btn-ct-icon" data-milista-toggle
+                                    th:data-pelicula-id="${pelicula.id}"
+                                    title="Añadir a Mi Lista">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Estado vacío: sin resultados tras búsqueda -->
+        <div class="empty-state animate-fadeInUp" th:if="${!query.isEmpty() and resultados.isEmpty()}">
+            <i class="fas fa-film"></i>
+            <h3>Sin resultados</h3>
+            <p>No encontramos ninguna película que coincida con "<strong th:text="${query}">query</strong>".</p>
+            <p class="mt-1" style="font-size:0.85rem; color:var(--text-muted);">
+                Prueba con otro título o comprueba la ortografía.
+            </p>
+        </div>
+
+        <!-- Estado inicial: pantalla vacía antes de buscar -->
+        <div class="empty-state animate-fadeInUp" th:if="${query.isEmpty()}">
+            <i class="fas fa-search"></i>
+            <h3>¿Qué quieres ver hoy?</h3>
+            <p>Escribe el título de una película para empezar a buscar.</p>
+        </div>
+
+    </div>
+
+</main>
+</body>
+</html>

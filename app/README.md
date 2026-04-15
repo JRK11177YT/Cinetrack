@@ -1,83 +1,64 @@
-# CineTrack Backend (Spring Boot)
+# CineTrack — Módulo Backend
 
-Configuracion base profesional para conectar CineTrack con MySQL de XAMPP.
-
-## Estado actual validado
-
-- Conexion Spring Boot -> MySQL `cinetrack_db` verificada.
-- Test de contexto y test de conexion ejecutados en local con exito.
-- Endpoints de salud operativos:
-  - `http://localhost:8080/health/ping`
-  - `http://localhost:8080/health/db`
+Módulo Spring Boot de la aplicación CineTrack.
 
 ## Requisitos
 
-- Java 17 (JDK)
-- XAMPP con modulo MySQL en estado **Running**
-- Base de datos `cinetrack_db` creada y scripts SQL aplicados
+- Java 17+
+- Maven 3.9+ (o usar el wrapper incluido `mvnw`)
+- MySQL 8.0 (XAMPP o Docker)
 
-> Nota: no necesitas tener `mvn` instalado globalmente. El proyecto usa Maven Wrapper (`mvnw.cmd`).
+## Configuración
 
-## Arranque recomendado (PowerShell)
+La aplicación lee la URL de base de datos desde variables de entorno con fallback a valores por defecto:
 
-```powershell
-Set-Location "C:\Users\Jorge\cinetrack\app"
-.\scripts\start-backend.ps1
+```
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=cinetrack_db
+DB_USER=root
+DB_PASSWORD=
 ```
 
-Alternativa equivalente:
+Sin variables de entorno arranca directamente contra XAMPP con usuario root sin contraseña.
 
-```powershell
-Set-Location "C:\Users\Jorge\cinetrack\app"
+## Arranque
+
+```bash
+# Windows
 .\mvnw.cmd spring-boot:run
+
+# Linux/Mac
+./mvnw spring-boot:run
 ```
 
-## Verificacion de conexion
+La aplicación arranca en `http://localhost:8080`.
 
-Con el backend levantado, ejecuta:
+## Estructura del código
 
-```powershell
-Set-Location "C:\Users\Jorge\cinetrack\app"
-.\scripts\check-backend.ps1
+```
+src/main/java/com/cinetrack/
+├── config/          # SecurityConfig, DatabaseSeeder, ProfileInterceptor
+├── controller/      # HomeController, AuthController, PerfilController,
+│                    # PeliculaController, MiListaController,
+│                    # CuentaController, AdminController
+├── model/           # Usuario, Perfil, Pelicula, Genero,
+│                    # HistorialVisualizacion, MiLista, PerfilGenero
+├── repository/      # Spring Data JPA interfaces
+├── service/         # Lógica de negocio
+└── health/          # Health check endpoint
 ```
 
-Resultado esperado:
+## Subida de archivos
 
-- `OK /health/ping -> {"service":"cinetrack-app","status":"UP"}`
-- `OK /health/db -> {"status":"UP","database":"cinetrack_db"}`
+Los archivos subidos se almacenan en `uploads/`:
+- `uploads/avatars/` — Avatares de perfil (máx. 2 MB)
+- `uploads/peliculas/imagenes/` — Posters (máx. 10 MB)
+- `uploads/peliculas/videos/` — Vídeos (máx. 500 MB)
 
-## Variables de entorno opcionales
+## Cuenta de administración
 
-Puedes sobreescribir parametros de conexion sin tocar codigo:
-
-- `DB_HOST` (por defecto `127.0.0.1`)
-- `DB_PORT` (por defecto `3306`)
-- `DB_NAME` (por defecto `cinetrack_db`)
-- `DB_USERNAME` (por defecto `root`)
-- `DB_PASSWORD` (por defecto vacio)
-
-Ejemplo para puerto y password personalizados:
-
-```powershell
-Set-Location "C:\Users\Jorge\cinetrack\app"
-$env:DB_PORT="3307"
-$env:DB_PASSWORD="tu_password"
-.\mvnw.cmd spring-boot:run
-```
-
-## Diagnostico rapido de errores tipicos
-
-1. **`Connection refused`**: MySQL no esta encendido o el puerto no coincide con XAMPP.
-2. **`Access denied for user`**: usuario/password incorrectos.
-3. **`Unknown database`**: `cinetrack_db` no existe o `DB_NAME` apunta a otra base.
-4. **No aparece boton Run en IntelliJ**: abrir `app/pom.xml` como proyecto Maven y confirmar JDK 17 en `Project SDK`.
-
-## Pruebas automatizadas
-
-```powershell
-Set-Location "C:\Users\Jorge\cinetrack\app"
-.\mvnw.cmd test
-```
-
-La clase `CineTrackApplicationTests` comprueba que Spring levanta y que `SELECT DATABASE()` devuelve `cinetrack_db`.
-
+Se crea automáticamente al arrancar si no existe:
+- Email: `admin@cinetrack.com`
+- Contraseña: `admin123`
+- Acceso al panel: `/admin`

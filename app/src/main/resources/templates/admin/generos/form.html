@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/layout}"
+      lang="es">
+<head>
+    <title th:text="${accion == 'nuevo'} ? 'Nuevo Género' : 'Editar Género'">Género</title>
+</head>
+<body>
+<div layout:fragment="admin-content">
+
+    <div class="admin-page-header">
+        <div>
+            <h1 class="admin-page-title" th:text="${accion == 'nuevo'} ? 'Nuevo Género' : 'Editar Género'">Género</h1>
+        </div>
+        <a th:href="@{/admin/generos}" class="admin-btn">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="admin-form-card">
+        <form th:action="${accion == 'nuevo'} ? @{/admin/generos/nuevo} : @{/admin/generos/editar/{id}(id=${genero.id})}"
+              method="post" class="admin-form">
+
+            <!-- Nombre -->
+            <div class="admin-form-group">
+                <label for="nombre">Nombre <span class="admin-required">*</span></label>
+                <input type="text" id="nombre" name="nombre" class="admin-input"
+                       th:value="${genero.nombre}" required maxlength="50" placeholder="Ej: Acción, Drama, Comedia..."/>
+            </div>
+
+            <!-- Descripción -->
+            <div class="admin-form-group">
+                <label for="descripcion">Descripción</label>
+                <textarea id="descripcion" name="descripcion" class="admin-input admin-input--textarea"
+                          rows="3" placeholder="Descripción opcional del género..." th:text="${genero.descripcion}"></textarea>
+            </div>
+
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-btn admin-btn--accent">
+                    <i class="fas fa-save"></i>
+                    <span th:text="${accion == 'nuevo'} ? 'Crear Género' : 'Guardar Cambios'">Guardar</span>
+                </button>
+                <a th:href="@{/admin/generos}" class="admin-btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/app}"
+      lang="es">
+<head>
+    <title>Mi Lista</title>
+</head>
+<body>
+<main layout:fragment="content">
+
+    <div class="page-section">
+        <h1 class="page-section__title animate-fadeInUp">Mi Lista</h1>
+
+        <!-- Grid de películas guardadas -->
+        <div class="movies-grid" th:if="${!miLista.isEmpty()}">
+            <div th:each="item : ${miLista}" class="movie-card reveal" style="aspect-ratio: 2/3;">
+                <a th:href="@{/pelicula/{id}(id=${item.pelicula.id})}">
+                    <div class="movie-card__poster"
+                         th:classappend="${item.pelicula.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(item.pelicula.genero.nombre, ' ', '-')) : ''}"
+                         th:style="${item.pelicula.urlImagen != null ? 'background-image:url(' + item.pelicula.urlImagen + ');background-size:cover;background-position:center;' : ''}">
+                        <span th:if="${item.pelicula.urlImagen == null}" th:text="${item.pelicula.titulo}">Título</span>
+                    </div>
+                    <div class="movie-card__overlay">
+                        <div class="movie-card__title" th:text="${item.pelicula.titulo}">Título</div>
+                        <div class="movie-card__info">
+                            <span th:text="${item.pelicula.anio}">2024</span>
+                            <span th:text="${item.pelicula.duracion} + 'min'">120min</span>
+                        </div>
+                        <div class="movie-card__actions">
+                            <button class="btn-ct-icon" title="Reproducir">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="btn-ct-icon active" data-milista-toggle
+                                    th:data-pelicula-id="${item.pelicula.id}"
+                                    title="Quitar de Mi Lista">
+                                <i class="fas fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Estado vacío -->
+        <div class="empty-state animate-fadeInUp" th:if="${miLista.isEmpty()}">
+            <i class="fas fa-bookmark"></i>
+            <h3>Tu lista está vacía</h3>
+            <p>Las películas que guardes aparecerán aquí para que puedas verlas cuando quieras.</p>
+            <a th:href="@{/inicio}" class="btn-ct-accent">
+                <i class="fas fa-home me-2"></i> Explorar Catálogo
+            </a>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>
