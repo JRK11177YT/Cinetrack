@@ -41,6 +41,12 @@ public class Pelicula {
     @Column(name = "url_hero", length = 255)
     private String urlHero;
 
+    @Column(length = 150)
+    private String director;
+
+    @Column(name = "valoracion_imdb")
+    private Double valoracionImdb;
+
     // ==========================================
     // RELACIÓN JPA (¡El secreto de un buen diseño!)
     // ==========================================
@@ -141,6 +147,22 @@ public class Pelicula {
 
     public void setUrlHero(String urlHero) {
         this.urlHero = urlHero;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public Double getValoracionImdb() {
+        return valoracionImdb;
+    }
+
+    public void setValoracionImdb(Double valoracionImdb) {
+        this.valoracionImdb = valoracionImdb;
     }
 
     public Genero getGenero() {

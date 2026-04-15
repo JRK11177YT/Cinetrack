@@ -4,6 +4,28 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 
 ---
 
+## [0.4.0] — 2026-04-15
+
+### Añadido
+- Buscador en tiempo real con sugerencias dinámicas vía AJAX
+- Página de resultados de búsqueda (`/buscar`)
+- Página de sugerencias personalizadas (`/sugerencias`) basadas en géneros favoritos del perfil activo
+- Chips de género seleccionables en el perfil para personalización
+- Campos `director` y `valoracion_imdb` en la entidad `Pelicula` (Hibernate auto-migra)
+- Todos los directores y valoraciones IMDb de las 31 películas del catálogo
+- Sección "Películas relacionadas" en la página de detalle (mismo género, máx. 6)
+- Icono oficial IMDb en la página de detalle
+- Botón "Volver arriba" en el footer
+- Versión de la app en el footer con enlace al repositorio GitHub
+
+### Corregido
+- Vídeo en detalle de película: eliminado `autoplay`, src cargado solo al pulsar Reproducir
+- Sinopsis duplicada en el hero banner de detalle eliminada
+- Footer flotando al centro en páginas con poco contenido (sticky footer via flex)
+- Layout del panel admin roto por las reglas de sticky footer (aislado con `:not(.admin-body)`)
+
+---
+
 ## [0.3.0] — 2026-04-10
 
 ### Añadido

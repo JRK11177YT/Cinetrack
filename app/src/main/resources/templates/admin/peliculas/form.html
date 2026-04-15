@@ -43,7 +43,19 @@
                               required rows="4" placeholder="Sinopsis de la película..." th:text="${pelicula.descripcion}"></textarea>
                 </div>
 
-                <!-- Género -->
+                <!-- Director -->
+                <div class="admin-form-group">
+                    <label for="director">Director</label>
+                    <input type="text" id="director" name="director" class="admin-input"
+                           th:value="${pelicula.director}" maxlength="150" placeholder="Nombre del director"/>
+                </div>
+
+                <!-- Valoración IMDb -->
+                <div class="admin-form-group">
+                    <label for="valoracionImdb">Valoración IMDb</label>
+                    <input type="number" id="valoracionImdb" name="valoracionImdb" class="admin-input"
+                           th:value="${pelicula.valoracionImdb}" min="0" max="10" step="0.1" placeholder="7.5"/>
+                </div>
                 <div class="admin-form-group">
                     <label for="generoId">Género <span class="admin-required">*</span></label>
                     <select id="generoId" name="generoId" class="admin-input admin-input--select" required>

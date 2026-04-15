@@ -16,6 +16,9 @@ import com.cinetrack.service.PerfilService;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 public class PeliculaController {
 
@@ -42,10 +45,17 @@ public class PeliculaController {
         boolean enMiLista = miListaService.estaEnMiLista(perfil.getId(), id);
         HistorialVisualizacion progreso = historialService.obtenerProgreso(perfil.getId(), id).orElse(null);
 
+        List<Pelicula> relacionadas = peliculaService.obtenerPorGenero(pelicula.getGenero().getId())
+                .stream()
+                .filter(p -> !p.getId().equals(id))
+                .limit(6)
+                .collect(Collectors.toList());
+
         model.addAttribute("pelicula", pelicula);
         model.addAttribute("enMiLista", enMiLista);
         model.addAttribute("progreso", progreso);
         model.addAttribute("perfil", perfil);
+        model.addAttribute("relacionadas", relacionadas);
 
         return "peliculas/detalle";
     }

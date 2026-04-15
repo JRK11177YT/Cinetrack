@@ -101,20 +101,30 @@
     <!-- FOOTER -->
     <footer class="ct-footer">
         <div class="ct-footer__inner">
-            <!-- Izquierda: vacío (balance visual) -->
-            <div class="ct-footer__col ct-footer__col--left"></div>
+            <!-- Izquierda: versión -->
+            <div class="ct-footer__col ct-footer__col--left">
+                <span class="ct-footer__version">
+                    <span class="ct-footer__version-dot"></span>
+                    v0.4.0 <span class="ct-footer__version-label">dev</span>
+                </span>
+            </div>
 
-            <!-- Centro: marca + copyright -->
+            <!-- Centro: marca + copyright + botón volver arriba -->
             <div class="ct-footer__col ct-footer__col--center">
+                <button class="ct-footer__top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
                 <span class="ct-brand ct-footer__brand">CINETRACK</span>
                 <p class="ct-footer__copy">&copy; 2026 CineTrack &mdash; Proyecto Académico</p>
             </div>
 
-            <!-- Derecha: autor -->
+            <!-- Derecha: autor + github -->
             <div class="ct-footer__col ct-footer__col--right">
                 <p class="ct-footer__author">
                     <span class="ct-footer__author-label">Realizado por</span>
-                    <span class="ct-footer__author-name">Jorge Ruiz</span>
+                    <a href="https://github.com/JRK11177YT" target="_blank" rel="noopener" class="ct-footer__author-name ct-footer__github">
+                        <i class="fab fa-github"></i> Jorge Ruiz
+                    </a>
                 </p>
             </div>
         </div>

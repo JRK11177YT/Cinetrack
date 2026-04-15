@@ -86,6 +86,8 @@ public class AdminController {
                                 @RequestParam String descripcion,
                                 @RequestParam Integer duracion,
                                 @RequestParam Integer anio,
+                                @RequestParam(required = false) String director,
+                                @RequestParam(required = false) Double valoracionImdb,
                                 @RequestParam(required = false) MultipartFile imagenFile,
                                 @RequestParam(required = false) MultipartFile videoFile,
                                 @RequestParam(required = false) MultipartFile heroFile,
@@ -99,6 +101,8 @@ public class AdminController {
             p.setDescripcion(descripcion.trim());
             p.setDuracion(duracion);
             p.setAnio(anio);
+            p.setDirector(director != null && !director.isBlank() ? director.trim() : null);
+            p.setValoracionImdb(valoracionImdb);
             p.setDestacada(destacada);
             p.setNovedad(novedad);
 
@@ -141,6 +145,8 @@ public class AdminController {
                                      @RequestParam String descripcion,
                                      @RequestParam Integer duracion,
                                      @RequestParam Integer anio,
+                                     @RequestParam(required = false) String director,
+                                     @RequestParam(required = false) Double valoracionImdb,
                                      @RequestParam(required = false) MultipartFile imagenFile,
                                      @RequestParam(required = false) MultipartFile videoFile,
                                      @RequestParam(required = false) MultipartFile heroFile,
@@ -154,6 +160,8 @@ public class AdminController {
             p.setDescripcion(descripcion.trim());
             p.setDuracion(duracion);
             p.setAnio(anio);
+            p.setDirector(director != null && !director.isBlank() ? director.trim() : null);
+            p.setValoracionImdb(valoracionImdb);
             p.setDestacada(destacada);
             p.setNovedad(novedad);
 
