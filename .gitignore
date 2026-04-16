@@ -19,3 +19,9 @@ build/
 Thumbs.db
 # User-uploaded content (runtime data, not source code)
 app/uploads/
+
+# Archivos temporales de sesión/debug
+app/cookies.txt
+app/login_headers.txt
+app/src/main/resources/static/css/*.bak
+app/src/main/resources/static/js/*.bak
