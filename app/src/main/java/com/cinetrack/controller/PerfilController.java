@@ -23,15 +23,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cinetrack.model.Genero;
 import com.cinetrack.model.Perfil;
-import com.cinetrack.model.PerfilGenero;
 import com.cinetrack.model.Usuario;
-import com.cinetrack.repository.PerfilGeneroRepository;
 import com.cinetrack.service.GeneroService;
 import com.cinetrack.service.PerfilService;
 import com.cinetrack.service.UsuarioService;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.transaction.Transactional;
 
 @Controller
 @RequestMapping("/perfiles")
@@ -40,15 +37,13 @@ public class PerfilController {
     private final PerfilService perfilService;
     private final UsuarioService usuarioService;
     private final GeneroService generoService;
-    private final PerfilGeneroRepository perfilGeneroRepository;
 
     @Autowired
     public PerfilController(PerfilService perfilService, UsuarioService usuarioService,
-                            GeneroService generoService, PerfilGeneroRepository perfilGeneroRepository) {
+                            GeneroService generoService) {
         this.perfilService = perfilService;
         this.usuarioService = usuarioService;
         this.generoService = generoService;
-        this.perfilGeneroRepository = perfilGeneroRepository;
     }
 
     @GetMapping
@@ -111,7 +106,7 @@ public class PerfilController {
         }
 
         List<Genero> todosGeneros = generoService.obtenerTodos();
-        Set<Integer> generosSeleccionados = perfilGeneroRepository.findByPerfilId(id)
+        Set<Integer> generosSeleccionados = perfilService.obtenerPreferenciasGenero(id)
                 .stream().map(pg -> pg.getGenero().getId()).collect(Collectors.toSet());
 
         model.addAttribute("perfil", perfil);
@@ -120,7 +115,6 @@ public class PerfilController {
         return "perfiles/editar";
     }
 
-    @Transactional
     @PostMapping("/editar/{id}")
     public String editarPerfil(@PathVariable Integer id,
                                @RequestParam String nombre,
@@ -152,18 +146,14 @@ public class PerfilController {
 
         perfilService.guardar(perfil);
 
-        // Actualizar géneros preferidos
-        perfilGeneroRepository.deleteByPerfilId(id);
+        // Actualizar géneros preferidos (delegado al servicio para garantizar transacción)
+        List<com.cinetrack.model.Genero> generosSeleccionados = new java.util.ArrayList<>();
         if (generos != null) {
             for (Integer generoId : generos) {
-                generoService.obtenerPorId(generoId).ifPresent(genero -> {
-                    PerfilGenero pg = new PerfilGenero();
-                    pg.setPerfil(perfil);
-                    pg.setGenero(genero);
-                    perfilGeneroRepository.save(pg);
-                });
+                generoService.obtenerPorId(generoId).ifPresent(generosSeleccionados::add);
             }
         }
+        perfilService.guardarPreferenciasGenero(perfil, generosSeleccionados);
 
         redirect.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
         return "redirect:/perfiles/gestionar";

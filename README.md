@@ -54,30 +54,51 @@ cinetrack/
 └── README.md
 ```
 
-## Puesta en marcha
+## Puesta en marcha desde cero (clon fresco)
 
-### Con XAMPP (desarrollo)
+### Opción A — Script automático (recomendado para Windows + XAMPP)
 
-1. Iniciar MySQL en XAMPP (puerto 3306)
-2. Crear la base de datos y ejecutar los scripts:
-   ```sql
-   source database/schema/001_tables.sql
-   source database/schema/002_relations.sql
-   source database/schema/003_constraints.sql
-   source database/schema/004_seeds.sql
+1. Iniciar MySQL en XAMPP (panel de control → Start MySQL)
+2. Ejecutar el script de inicialización desde la raíz del proyecto:
+   ```powershell
+   .\scripts\setup-db.ps1
+   # Si tienes contraseña en MySQL:
+   .\scripts\setup-db.ps1 -Password "tupassword"
    ```
-3. Lanzar la aplicación:
-   ```bash
+3. Arrancar la aplicación:
+   ```powershell
    cd app
-   ./mvnw spring-boot:run
+   .\mvnw.cmd spring-boot:run
    ```
 4. Acceder a `http://localhost:8080`
 
-### Con Docker
+El script crea la base de datos `cinetrack_db`, carga toda la estructura y los datos de prueba (31 películas, 6 géneros). El usuario administrador se crea automáticamente al arrancar la app.
+
+### Opción B — Manual (MySQL CLI)
+
+```bash
+mysql -u root < database/init.sql
+cd app && ./mvnw spring-boot:run
+```
+
+### Opción C — Script para Linux/macOS
+
+```bash
+bash scripts/setup-db.sh
+cd app && ./mvnw spring-boot:run
+```
+
+### Opción D — Con Docker
 
 ```bash
 docker-compose up -d
 ```
+
+---
+
+**Credenciales por defecto:**
+- Admin: `admin@cinetrack.com` / `admin123`
+- Panel de administración: `http://localhost:8080/admin`
 
 ## Credenciales de acceso
 
