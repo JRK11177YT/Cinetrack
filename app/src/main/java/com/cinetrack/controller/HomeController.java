@@ -10,11 +10,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.cinetrack.model.Genero;
-import com.cinetrack.model.HistorialVisualizacion;
 import com.cinetrack.model.Pelicula;
 import com.cinetrack.model.Perfil;
 import com.cinetrack.service.GeneroService;
-import com.cinetrack.service.HistorialVisualizacionService;
 import com.cinetrack.service.PeliculaService;
 import com.cinetrack.service.PerfilService;
 
@@ -25,15 +23,13 @@ public class HomeController {
 
     private final PeliculaService peliculaService;
     private final GeneroService generoService;
-    private final HistorialVisualizacionService historialService;
     private final PerfilService perfilService;
 
     @Autowired
     public HomeController(PeliculaService peliculaService, GeneroService generoService,
-                          HistorialVisualizacionService historialService, PerfilService perfilService) {
+                          PerfilService perfilService) {
         this.peliculaService = peliculaService;
         this.generoService = generoService;
-        this.historialService = historialService;
         this.perfilService = perfilService;
     }
 
@@ -63,10 +59,6 @@ public class HomeController {
         // Novedades carousel (películas marcadas como novedad)
         List<Pelicula> novedades = peliculaService.obtenerNovedades();
         model.addAttribute("novedades", novedades);
-
-        // Seguir viendo
-        List<HistorialVisualizacion> seguirViendo = historialService.obtenerSeguirViendo(perfil.getId());
-        model.addAttribute("seguirViendo", seguirViendo);
 
         // Películas por género (para los carruseles)
         List<Genero> generos = generoService.obtenerTodos();

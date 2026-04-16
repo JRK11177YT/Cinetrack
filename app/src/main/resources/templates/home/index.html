@@ -112,38 +112,6 @@
     <!-- ====== CONTENT ROWS ====== -->
     <div class="content-section">
 
-        <!-- Seguir Viendo -->
-        <section class="movie-row reveal" th:if="${!seguirViendo.isEmpty()}">
-            <h2 class="movie-row__title">
-                <i class="fas fa-history me-2" style="color: var(--accent);"></i>
-                Seguir Viendo
-            </h2>
-            <div class="movie-row__container">
-                <button class="movie-row__arrow movie-row__arrow--left">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="movie-row__slider">
-                    <div th:each="historial : ${seguirViendo}" class="movie-card">
-                        <a th:href="@{/pelicula/{id}(id=${historial.pelicula.id})}">
-                            <div class="movie-card__poster"
-                                 th:classappend="${historial.pelicula.urlImagen == null ? 'movie-card__poster--' + #strings.toLowerCase(#strings.replace(historial.pelicula.genero.nombre, ' ', '-')) : ''}"
-                                 th:style="${historial.pelicula.urlImagen != null ? 'background-image:url(' + historial.pelicula.urlImagen + ');background-size:cover;background-position:center;' : ''}">
-                                <span th:if="${historial.pelicula.urlImagen == null}" th:text="${historial.pelicula.titulo}">Título</span>
-                            </div>
-                            <div class="movie-card__progress">
-                                <div class="movie-card__progress-bar"
-                                     th:style="'width:' + ${(historial.progresoSegundos * 100) / (historial.pelicula.duracion * 60)} + '%'">
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <button class="movie-row__arrow movie-row__arrow--right">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </section>
-
         <!-- Destacadas / Top CineTrack -->
         <section class="movie-row reveal" th:if="${!destacadas.isEmpty()}">
             <h2 class="movie-row__title">
