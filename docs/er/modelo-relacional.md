@@ -1,67 +1,87 @@
 # Modelo relacional de CineTrack
 
-## Tablas principales
+## Diagrama Entidad-Relación
 
-### usuarios
+```mermaid
+erDiagram
+    usuarios {
+        INT id PK
+        VARCHAR_150 email UK
+        VARCHAR_255 password
+        VARCHAR_20 plan
+        DATETIME fecha_registro
+        VARCHAR_20 rol
+        BOOLEAN activo
+    }
 
-* id (PK)
-* nombre
-* email (UNIQUE)
-* password
-* imagen_perfil
-* fecha_registro
-* rol
-* activo
+    perfiles {
+        INT id PK
+        INT usuario_id FK
+        VARCHAR_50 nombre
+        VARCHAR_255 avatar_url
+        BOOLEAN activo
+        DATETIME fecha_creacion
+    }
 
-### generos
+    generos {
+        INT id PK
+        VARCHAR_50 nombre UK
+        VARCHAR_255 descripcion
+    }
 
-* id (PK)
-* nombre (UNIQUE)
-* descripcion
+    peliculas {
+        INT id PK
+        VARCHAR_150 titulo
+        TEXT descripcion
+        INT duracion
+        INT anio
+        VARCHAR_255 url_imagen
+        VARCHAR_255 url_hero
+        VARCHAR_255 url_video
+        INT genero_id FK
+        BOOLEAN destacada
+        DATETIME fecha_creacion
+    }
 
-### peliculas
+    perfil_generos {
+        INT id PK
+        INT perfil_id FK
+        INT genero_id FK
+    }
 
-* id (PK)
-* titulo
-* descripcion
-* duracion
-* anio
-* url_imagen
-* url_video
-* genero_id (FK → generos.id)
-* destacada
-* fecha_creacion
+    mi_lista {
+        INT id PK
+        INT perfil_id FK
+        INT pelicula_id FK
+        DATETIME fecha_agregado
+    }
 
-### usuario_generos
+    usuarios ||--o{ perfiles : "tiene (CASCADE)"
+    generos ||--o{ peliculas : "categoriza"
+    perfiles ||--o{ perfil_generos : "prefiere (CASCADE)"
+    generos ||--o{ perfil_generos : "incluido en"
+    perfiles ||--o{ mi_lista : "guarda (CASCADE)"
+    peliculas ||--o{ mi_lista : "guardada en"
+```
 
-* id (PK)
-* usuario_id (FK → usuarios.id)
-* genero_id (FK → generos.id)
-* UNIQUE(usuario_id, genero_id)
+## Resumen de restricciones
 
-### historial_visualizacion
-
-* id (PK)
-* usuario_id (FK → usuarios.id)
-* pelicula_id (FK → peliculas.id)
-* fecha_ultima_visualizacion
-* progreso_segundos
-* completada
-* UNIQUE(usuario_id, pelicula_id)
-
-### mi_lista
-
-* id (PK)
-* usuario_id (FK → usuarios.id)
-* pelicula_id (FK → peliculas.id)
-* fecha_agregado
-* UNIQUE(usuario_id, pelicula_id)
+| Tabla | Restricción única |
+|---|---|
+| `usuarios` | `email` |
+| `generos` | `nombre` |
+| `perfil_generos` | `(perfil_id, genero_id)` |
+| `mi_lista` | `(perfil_id, pelicula_id)` |
 
 ## Relaciones
 
-* generos 1:N peliculas
-* usuarios N:M generos mediante usuario_generos
-* usuarios 1:N historial_visualizacion
-* peliculas 1:N historial_visualizacion
-* usuarios 1:N mi_lista
-* peliculas 1:N mi_lista
+| Relación | Cardinalidad | ON DELETE |
+|---|---|---|
+| `usuarios` → `perfiles` | 1:N | CASCADE |
+| `generos` → `peliculas` | 1:N | RESTRICT |
+| `perfiles` → `perfil_generos` | 1:N | CASCADE |
+| `generos` → `perfil_generos` | 1:N | RESTRICT |
+| `perfiles` → `mi_lista` | 1:N | CASCADE |
+| `peliculas` → `mi_lista` | 1:N | RESTRICT |
+
+> `url_hero` está gestionado por Hibernate (`ddl-auto=update`).

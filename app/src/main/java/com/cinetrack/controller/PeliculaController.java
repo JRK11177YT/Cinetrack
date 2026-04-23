@@ -6,10 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.cinetrack.model.HistorialVisualizacion;
 import com.cinetrack.model.Pelicula;
 import com.cinetrack.model.Perfil;
-import com.cinetrack.service.HistorialVisualizacionService;
 import com.cinetrack.service.MiListaService;
 import com.cinetrack.service.PeliculaService;
 import com.cinetrack.service.PerfilService;
@@ -24,15 +22,13 @@ public class PeliculaController {
 
     private final PeliculaService peliculaService;
     private final MiListaService miListaService;
-    private final HistorialVisualizacionService historialService;
     private final PerfilService perfilService;
 
     @Autowired
     public PeliculaController(PeliculaService peliculaService, MiListaService miListaService,
-                              HistorialVisualizacionService historialService, PerfilService perfilService) {
+                              PerfilService perfilService) {
         this.peliculaService = peliculaService;
         this.miListaService = miListaService;
-        this.historialService = historialService;
         this.perfilService = perfilService;
     }
 
@@ -43,7 +39,6 @@ public class PeliculaController {
         Pelicula pelicula = peliculaService.obtenerPorId(id).orElseThrow();
 
         boolean enMiLista = miListaService.estaEnMiLista(perfil.getId(), id);
-        HistorialVisualizacion progreso = historialService.obtenerProgreso(perfil.getId(), id).orElse(null);
 
         List<Pelicula> relacionadas = peliculaService.obtenerPorGenero(pelicula.getGenero().getId())
                 .stream()
@@ -53,7 +48,6 @@ public class PeliculaController {
 
         model.addAttribute("pelicula", pelicula);
         model.addAttribute("enMiLista", enMiLista);
-        model.addAttribute("progreso", progreso);
         model.addAttribute("perfil", perfil);
         model.addAttribute("relacionadas", relacionadas);
 

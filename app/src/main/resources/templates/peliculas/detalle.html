@@ -40,9 +40,7 @@
 
             <div class="detail-content__buttons">
                 <button class="btn-ct-play" th:if="${pelicula.urlVideo != null}" onclick="abrirReproductor()">
-                    <i class="fas fa-play"></i>
-                    <span th:if="${progreso != null && !progreso.completada}">Continuar</span>
-                    <span th:unless="${progreso != null && !progreso.completada}">Reproducir</span>
+                    <i class="fas fa-play"></i> Reproducir
                 </button>
                 <button class="btn-ct-play" th:if="${pelicula.urlVideo == null}" disabled
                         style="opacity:0.5; cursor:not-allowed;">
@@ -57,19 +55,6 @@
                 </button>
             </div>
 
-            <!-- Progress bar if watching -->
-            <div class="detail-content__progress" th:if="${progreso != null && !progreso.completada}">
-                <div class="detail-content__progress-label">
-                    <span th:text="${progreso.progresoSegundos / 60} + ' min de ' + ${pelicula.duracion} + ' min'">
-                        30 min de 120 min
-                    </span>
-                </div>
-                <div class="ct-progress">
-                    <div class="ct-progress__fill"
-                         th:style="'width:' + ${(progreso.progresoSegundos * 100) / (pelicula.duracion * 60)} + '%'">
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 

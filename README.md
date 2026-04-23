@@ -22,11 +22,10 @@ El núcleo funcional está completamente operativo. La aplicación arranca, se c
 |---|---|
 | Backend | Java 17 + Spring Boot 3.3.5 |
 | Frontend | Thymeleaf + Bootstrap 5.3 |
-| Base de datos | MySQL 8 (XAMPP en desarrollo, Docker en despliegue) |
+| Base de datos | MySQL 8 |
 | Seguridad | Spring Security + BCrypt |
 | ORM | Spring Data JPA / Hibernate |
 | Control de versiones | Git + GitHub |
-| Contenedores | Docker + Docker Compose |
 
 ## Funcionalidades implementadas
 
@@ -36,8 +35,6 @@ El núcleo funcional está completamente operativo. La aplicación arranca, se c
 - **Cartelera de inicio** — Carousel de novedades + filas por género al estilo Netflix
 - **Buscador en tiempo real** — Búsqueda con sugerencias dinámicas vía AJAX
 - **Sugerencias personalizadas** — Basadas en géneros favoritos del perfil activo
-- **Historial de visualización** — Seguimiento de progreso por perfil (segundos vistos)
-- **Continuar viendo** — Sección dinámica en la home basada en el historial
 - **Mi Lista** — Guardado de películas por perfil con respuesta AJAX
 - **Página de detalle** — Director, valoración IMDb, video bajo demanda y películas relacionadas
 - **Panel de administración** — CRUD completo de películas, géneros y usuarios con subida de archivos
@@ -56,11 +53,10 @@ cinetrack/
 ├── database/
 │   ├── schema/             # Scripts SQL (tablas, relaciones, seeds)
 │   └── migrations/         # Migraciones incrementales
-├── docker/                 # Configuración MySQL Docker
 ├── docs/                   # Documentación técnica y arquitectura
 │   ├── atlas/              # Roadmap y notas de arquitectura
 │   └── er/                 # Modelo relacional y ER
-├── docker-compose.yml
+├── scripts/                # Scripts de inicialización (Windows y Linux)
 └── README.md
 ```
 
@@ -91,18 +87,27 @@ mysql -u root < database/init.sql
 cd app && ./mvnw spring-boot:run
 ```
 
-### Opción C — Script para Linux/macOS
+### Opción C — Linux (VirtualBox / Ubuntu / macOS)
 
-```bash
-bash scripts/setup-db.sh
-cd app && ./mvnw spring-boot:run
-```
-
-### Opción D — Con Docker
-
-```bash
-docker-compose up -d
-```
+1. Instalar dependencias:
+   ```bash
+   sudo apt update
+   sudo apt install -y openjdk-17-jdk mysql-server git
+   sudo systemctl start mysql
+   ```
+2. Clonar el repositorio y ejecutar el script de inicialización:
+   ```bash
+   git clone https://github.com/JRK11177YT/Cinetrack.git cinetrack
+   cd cinetrack
+   bash scripts/setup-db.sh
+   ```
+3. Arrancar la aplicación:
+   ```bash
+   cd app
+   chmod +x mvnw
+   ./mvnw spring-boot:run
+   ```
+4. Acceder a `http://localhost:8080`
 
 ---
 

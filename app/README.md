@@ -6,7 +6,7 @@ Módulo Spring Boot de la aplicación CineTrack.
 
 - Java 17+
 - Maven 3.9+ (o usar el wrapper incluido `mvnw`)
-- MySQL 8.0 (XAMPP o Docker)
+- MySQL 8.0 (XAMPP en Windows, paquete `mysql-server` en Linux)
 
 ## Configuración
 

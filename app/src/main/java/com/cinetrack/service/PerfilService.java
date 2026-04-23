@@ -11,7 +11,6 @@ import com.cinetrack.model.Genero;
 import com.cinetrack.model.Perfil;
 import com.cinetrack.model.PerfilGenero;
 import com.cinetrack.model.Usuario;
-import com.cinetrack.repository.HistorialVisualizacionRepository;
 import com.cinetrack.repository.MiListaRepository;
 import com.cinetrack.repository.PerfilGeneroRepository;
 import com.cinetrack.repository.PerfilRepository;
@@ -22,15 +21,13 @@ public class PerfilService {
     private final PerfilRepository perfilRepository;
     private final PerfilGeneroRepository perfilGeneroRepository;
     private final MiListaRepository miListaRepository;
-    private final HistorialVisualizacionRepository historialRepository;
 
     @Autowired
     public PerfilService(PerfilRepository perfilRepository, PerfilGeneroRepository perfilGeneroRepository,
-                         MiListaRepository miListaRepository, HistorialVisualizacionRepository historialRepository) {
+                         MiListaRepository miListaRepository) {
         this.perfilRepository = perfilRepository;
         this.perfilGeneroRepository = perfilGeneroRepository;
         this.miListaRepository = miListaRepository;
-        this.historialRepository = historialRepository;
     }
 
     public List<Perfil> obtenerPerfilesPorUsuario(Integer usuarioId) {
@@ -74,7 +71,6 @@ public class PerfilService {
 
     @Transactional
     public void eliminar(Integer perfilId) {
-        historialRepository.deleteByPerfilId(perfilId);
         miListaRepository.deleteByPerfilId(perfilId);
         perfilGeneroRepository.deleteByPerfilId(perfilId);
         perfilRepository.deleteById(perfilId);

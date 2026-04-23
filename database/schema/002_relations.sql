@@ -20,15 +20,6 @@ ADD CONSTRAINT fk_perfil_generos_genero
 FOREIGN KEY (genero_id) REFERENCES generos(id);
 
 
-ALTER TABLE historial_visualizacion
-ADD CONSTRAINT fk_historial_perfil
-FOREIGN KEY (perfil_id) REFERENCES perfiles(id) ON DELETE CASCADE;
-
-ALTER TABLE historial_visualizacion
-ADD CONSTRAINT fk_historial_pelicula
-FOREIGN KEY (pelicula_id) REFERENCES peliculas(id);
-
-
 ALTER TABLE mi_lista
 ADD CONSTRAINT fk_mi_lista_perfil
 FOREIGN KEY (perfil_id) REFERENCES perfiles(id) ON DELETE CASCADE;
