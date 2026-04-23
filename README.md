@@ -8,8 +8,6 @@
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen)
 
-> ⚠️ **Revisión intermedia** — Este repositorio refleja el estado actual del proyecto para revisión del profesorado. **No es la versión final de entrega.** El desarrollo continúa activamente en la rama `develop` y `feature/frontend-ui`.
-
 ---
 
 ## Estado actual — v0.4.0-dev
