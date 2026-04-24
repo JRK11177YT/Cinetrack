@@ -64,4 +64,12 @@ public class PeliculaService {
     public void eliminarTodas() {
         peliculaRepository.deleteAll();
     }
+
+    public long contar() {
+        return peliculaRepository.count();
+    }
+
+    public List<Pelicula> obtenerRecientes(int limite) {
+        return peliculaRepository.findTop5ByOrderByFechaCreacionDesc();
+    }
 }

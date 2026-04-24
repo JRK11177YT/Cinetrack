@@ -21,4 +21,10 @@ public interface PeliculaRepository extends JpaRepository<Pelicula, Integer> {
 
     // SELECT * FROM peliculas WHERE novedad = true
     List<Pelicula> findByNovedadTrue();
+
+    // SELECT COUNT(*) FROM peliculas
+    long count();
+
+    // SELECT * FROM peliculas ORDER BY fecha_creacion DESC LIMIT 5
+    List<Pelicula> findTop5ByOrderByFechaCreacionDesc();
 }

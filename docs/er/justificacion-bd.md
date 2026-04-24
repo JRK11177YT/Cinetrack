@@ -1,4 +1,4 @@
-# Justificación del diseño de base de datos
+﻿# Justificación del diseño de base de datos
 
 ## Objetivo del diseño
 
@@ -28,30 +28,25 @@ Estas representan la información estructural básica del sistema.
 
 Para representar comportamiento real del usuario, se han añadido:
 
-* usuario_generos
-* historial_visualizacion
+* perfil_generos
 * mi_lista
 
 Estas tablas permiten implementar funcionalidades avanzadas como:
 
-* personalización según gustos
-* continuar viendo
-* historial de reproducción
+* personalización del catálogo según gustos del perfil
 * lista de contenido para ver más adelante
 
 ## Decisiones relevantes
 
-### usuario_generos
+### perfil_generos
 
-Se utiliza una tabla intermedia porque un usuario puede tener varios gustos y un mismo género puede estar asociado a muchos usuarios.
+Se utiliza una tabla intermedia porque un perfil puede preferir varios géneros y un mismo género puede estar asociado a muchos perfiles. La restricción única compuesta `(perfil_id, genero_id)` evita duplicados.
 
-### historial_visualizacion
-
-Se ha diseñado con una sola fila por combinación de usuario y película para mantener el progreso actual de visualización y facilitar la funcionalidad de “seguir viendo”.
+Se diseña a nivel de **perfil** (no de usuario) para permitir que cada miembro de la cuenta tenga preferencias independientes, siguiendo el modelo de plataformas como Netflix.
 
 ### mi_lista
 
-Se separa del historial porque representa una intención de consumo futuro, no una reproducción iniciada.
+Representa una intención de consumo futuro por parte de un perfil concreto. La restricción única compuesta `(perfil_id, pelicula_id)` garantiza que una película no se añada dos veces a la misma lista.
 
 ## Evolución futura
 
@@ -59,8 +54,8 @@ El diseño permite añadir en el futuro nuevas tablas como:
 
 * valoraciones
 * comentarios
-* favoritos
-* recomendaciones
+* recomendaciones automáticas
+* historial de visualización (cuando se implemente el reproductor)
 * listas personalizadas
 
 Esto convierte la base de datos en una estructura modular y extensible, adecuada para el crecimiento progresivo del proyecto.

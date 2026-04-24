@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID", "remember-me")
                 )
                 .rememberMe(remember -> remember
-                        .key("cinetrack-secret-key-2024")
+                        .key(System.getenv().getOrDefault("REMEMBER_ME_KEY", "cinetrack-remember-key"))
                         .tokenValiditySeconds(7 * 24 * 60 * 60)
                         .rememberMeParameter("recuerdame")
                 );

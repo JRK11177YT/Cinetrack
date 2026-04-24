@@ -54,12 +54,10 @@ public class AdminController {
 
     @GetMapping
     public String dashboard(Model model) {
-        model.addAttribute("totalPeliculas", peliculaService.obtenerTodas().size());
-        model.addAttribute("totalUsuarios", usuarioService.findAll().size());
-        model.addAttribute("totalGeneros", generoService.obtenerTodos().size());
-        model.addAttribute("peliculasRecientes", peliculaService.obtenerTodas().stream()
-                .sorted((a, b) -> b.getFechaCreacion().compareTo(a.getFechaCreacion()))
-                .limit(5).toList());
+        model.addAttribute("totalPeliculas", peliculaService.contar());
+        model.addAttribute("totalUsuarios", usuarioService.contar());
+        model.addAttribute("totalGeneros", generoService.contar());
+        model.addAttribute("peliculasRecientes", peliculaService.obtenerRecientes(5));
         return "admin/dashboard";
     }
 

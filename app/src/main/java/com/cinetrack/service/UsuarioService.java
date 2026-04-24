@@ -49,4 +49,8 @@ public class UsuarioService {
     public void eliminar(Integer id) {
         usuarioRepository.deleteById(id);
     }
+
+    public long contar() {
+        return usuarioRepository.count();
+    }
 }

@@ -12,4 +12,7 @@ public interface GeneroRepository extends JpaRepository<Genero, Integer> {
     
     // SELECT * FROM generos WHERE nombre = ?
     Optional<Genero> findByNombreIgnoreCase(String nombre);
+
+    // SELECT COUNT(*) FROM generos
+    long count();
 }
