@@ -34,9 +34,17 @@ public class ProfileInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession(false);
 
-        // Si ya tiene perfil activo, dejar pasar
+        // Si ya tiene perfil activo, verificar que sigue existiendo en BD
+        // BUG 4 FIX: sin esta comprobación un perfil borrado por admin producía NPE/500
         if (session != null && session.getAttribute("perfilActivoId") != null) {
-            return true;
+            Integer perfilActivoId = (Integer) session.getAttribute("perfilActivoId");
+            if (perfilService.obtenerPorId(perfilActivoId).isPresent()) {
+                return true;
+            }
+            // El perfil ya no existe (borrado por admin u otro proceso): limpiar sesión y redirigir
+            session.removeAttribute("perfilActivoId");
+            response.sendRedirect("/perfiles");
+            return false;
         }
 
         // Obtener usuario autenticado

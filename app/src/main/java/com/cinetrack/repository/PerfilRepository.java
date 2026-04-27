@@ -12,5 +12,6 @@ public interface PerfilRepository extends JpaRepository<Perfil, Integer> {
 
     List<Perfil> findByUsuarioIdAndActivoTrue(Integer usuarioId);
 
-    long countByUsuarioId(Integer usuarioId);
+    // BUG 6 FIX: mismo filtro activo=true que findByUsuarioIdAndActivoTrue
+    long countByUsuarioIdAndActivoTrue(Integer usuarioId);
 }

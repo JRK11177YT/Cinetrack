@@ -54,12 +54,10 @@ public class AdminController {
 
     @GetMapping
     public String dashboard(Model model) {
-        model.addAttribute("totalPeliculas", peliculaService.obtenerTodas().size());
-        model.addAttribute("totalUsuarios", usuarioService.findAll().size());
-        model.addAttribute("totalGeneros", generoService.obtenerTodos().size());
-        model.addAttribute("peliculasRecientes", peliculaService.obtenerTodas().stream()
-                .sorted((a, b) -> b.getFechaCreacion().compareTo(a.getFechaCreacion()))
-                .limit(5).toList());
+        model.addAttribute("totalPeliculas", peliculaService.contar());
+        model.addAttribute("totalUsuarios", usuarioService.contar());
+        model.addAttribute("totalGeneros", generoService.contar());
+        model.addAttribute("peliculasRecientes", peliculaService.obtenerRecientes(5));
         return "admin/dashboard";
     }
 
@@ -364,6 +362,24 @@ public class AdminController {
                                   String[] allowedPrefixes, long maxBytes) throws IOException {
         log.info("guardarArchivo: name={}, contentType={}, size={}, subfolder={}",
                 file.getOriginalFilename(), file.getContentType(), file.getSize(), subfolder);
+
+        // BUG 1 FIX: validar tipo de contenido contra los prefijos permitidos
+        String contentType = file.getContentType();
+        if (contentType == null) {
+            log.warn("Tipo de archivo desconocido (contentType null)");
+            return null;
+        }
+        boolean tipoPermitido = false;
+        for (String prefix : allowedPrefixes) {
+            if (contentType.startsWith(prefix)) {
+                tipoPermitido = true;
+                break;
+            }
+        }
+        if (!tipoPermitido) {
+            log.warn("Tipo de archivo no permitido: {}", contentType);
+            return null;
+        }
 
         if (file.getSize() > maxBytes) {
             log.warn("Archivo demasiado grande: {} > {} bytes", file.getSize(), maxBytes);

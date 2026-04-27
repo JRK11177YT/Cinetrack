@@ -38,4 +38,8 @@ public class GeneroService {
     public void eliminar(Integer id) {
         generoRepository.deleteById(id);
     }
+
+    public long contar() {
+        return generoRepository.count();
+    }
 }

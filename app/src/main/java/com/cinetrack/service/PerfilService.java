@@ -51,7 +51,7 @@ public class PerfilService {
     }
 
     public long contarPerfilesPorUsuario(Integer usuarioId) {
-        return perfilRepository.countByUsuarioId(usuarioId);
+        return perfilRepository.countByUsuarioIdAndActivoTrue(usuarioId);
     }
 
     @Transactional

@@ -3,6 +3,11 @@
 .vscode/
 *.iml
 
+# Debug artifacts
+cookies.txt
+login_headers.txt
+*.bak
+
 # Java
 target/
 build/

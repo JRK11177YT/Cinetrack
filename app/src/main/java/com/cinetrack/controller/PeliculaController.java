@@ -1,5 +1,8 @@
 package com.cinetrack.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,9 +16,6 @@ import com.cinetrack.service.PeliculaService;
 import com.cinetrack.service.PerfilService;
 
 import jakarta.servlet.http.HttpSession;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class PeliculaController {

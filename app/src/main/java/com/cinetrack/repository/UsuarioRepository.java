@@ -20,4 +20,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     // Esto automáticamente ejecuta: SELECT * FROM usuarios WHERE activo = true
     Iterable<Usuario> findByActivoTrue();
+
+    // SELECT COUNT(*) FROM usuarios
+    long count();
 }

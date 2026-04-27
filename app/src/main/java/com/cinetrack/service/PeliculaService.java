@@ -2,7 +2,6 @@ package com.cinetrack.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,9 +47,9 @@ public class PeliculaService {
         if (generoIds == null || generoIds.isEmpty()) {
             return peliculaRepository.findAll();
         }
-        return generoIds.stream()
-                .flatMap(gid -> peliculaRepository.findByGeneroId(gid).stream())
-                .collect(Collectors.toList());
+        // Una sola query: SELECT * FROM peliculas WHERE genero_id IN (?,...)
+        // Antes: N queries en bucle (una por genero) — ineficiente con catalogo grande
+        return peliculaRepository.findByGeneroIdIn(generoIds);
     }
 
     public Pelicula guardar(Pelicula pelicula) {
@@ -63,5 +62,13 @@ public class PeliculaService {
 
     public void eliminarTodas() {
         peliculaRepository.deleteAll();
+    }
+
+    public long contar() {
+        return peliculaRepository.count();
+    }
+
+    public List<Pelicula> obtenerRecientes(int limite) {
+        return peliculaRepository.findTop5ByOrderByFechaCreacionDesc();
     }
 }
