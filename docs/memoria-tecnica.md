@@ -244,8 +244,8 @@ PASO 3: /registro/crear-perfil
 ## 8. Frontend — Decisiones de Diseño
 
 ### Identidad Visual
-El diseño está construido completamente a mano con CSS personalizado, sin depender de frameworks
-como Bootstrap. Esto significa que cada componente ha sido diseñado de forma consciente:
+Bootstrap 5 actúa como base estructural (sistema de grid, utilidades y componente navbar). Sobre
+esta base, un CSS personalizado completo (`main.css`) implementa toda la identidad visual:
 - **Paleta de color**: fondos `#141414` / `#1a1a1a` con acentos en rojo `#e50914` (identidad Netflix)
 - **Tipografía**: Montserrat para títulos (impacto visual) + Inter para texto (legibilidad máxima)
 - **Modelo caja**: uso de Flexbox para la navegación y chips de géneros; CSS Grid para el catálogo

@@ -87,16 +87,6 @@ CREATE TABLE IF NOT EXISTS `mi_lista` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `historial_visualizacion` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `perfil_id` INT(11) NOT NULL,
-    `pelicula_id` INT(11) NOT NULL,
-    `fecha_ultima_visualizacion` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `progreso_segundos` INT(11) NOT NULL DEFAULT 0,
-    `completada` TINYINT(1) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- =============================================
 -- RESTRICCIONES E ÍNDICES
 -- =============================================
@@ -113,9 +103,6 @@ ALTER TABLE `perfil_generos`
 ALTER TABLE `mi_lista`
     ADD CONSTRAINT `uq_mi_lista` UNIQUE (`perfil_id`, `pelicula_id`);
 
-ALTER TABLE `historial_visualizacion`
-    ADD CONSTRAINT `uq_historial_perfil_pelicula` UNIQUE (`perfil_id`, `pelicula_id`);
-
 CREATE INDEX idx_perfiles_usuario_id      ON perfiles(usuario_id);
 CREATE INDEX idx_peliculas_titulo         ON peliculas(titulo);
 CREATE INDEX idx_peliculas_genero_id      ON peliculas(genero_id);
@@ -123,8 +110,6 @@ CREATE INDEX idx_perfil_generos_perfil_id ON perfil_generos(perfil_id);
 CREATE INDEX idx_perfil_generos_genero_id ON perfil_generos(genero_id);
 CREATE INDEX idx_mi_lista_perfil_id       ON mi_lista(perfil_id);
 CREATE INDEX idx_mi_lista_pelicula_id     ON mi_lista(pelicula_id);
-CREATE INDEX idx_historial_perfil_id      ON historial_visualizacion(perfil_id);
-CREATE INDEX idx_historial_pelicula_id    ON historial_visualizacion(pelicula_id);
 
 -- =============================================
 -- RELACIONES / FOREIGN KEYS
@@ -152,14 +137,6 @@ ALTER TABLE `mi_lista`
 
 ALTER TABLE `mi_lista`
     ADD CONSTRAINT `fk_mi_lista_pelicula`
-    FOREIGN KEY (`pelicula_id`) REFERENCES `peliculas`(`id`);
-
-ALTER TABLE `historial_visualizacion`
-    ADD CONSTRAINT `fk_historial_perfil`
-    FOREIGN KEY (`perfil_id`) REFERENCES `perfiles`(`id`) ON DELETE CASCADE;
-
-ALTER TABLE `historial_visualizacion`
-    ADD CONSTRAINT `fk_historial_pelicula`
     FOREIGN KEY (`pelicula_id`) REFERENCES `peliculas`(`id`);
 
 

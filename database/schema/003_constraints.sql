@@ -14,9 +14,6 @@ ADD CONSTRAINT uq_perfil_genero UNIQUE (perfil_id, genero_id);
 ALTER TABLE mi_lista
 ADD CONSTRAINT uq_mi_lista UNIQUE (perfil_id, pelicula_id);
 
-ALTER TABLE historial_visualizacion
-ADD CONSTRAINT uq_historial_perfil_pelicula UNIQUE (perfil_id, pelicula_id);
-
 -- Índices de rendimiento
 CREATE INDEX idx_perfiles_usuario_id ON perfiles(usuario_id);
 
@@ -28,6 +25,3 @@ CREATE INDEX idx_perfil_generos_genero_id ON perfil_generos(genero_id);
 
 CREATE INDEX idx_mi_lista_perfil_id   ON mi_lista(perfil_id);
 CREATE INDEX idx_mi_lista_pelicula_id ON mi_lista(pelicula_id);
-
-CREATE INDEX idx_historial_perfil_id   ON historial_visualizacion(perfil_id);
-CREATE INDEX idx_historial_pelicula_id ON historial_visualizacion(pelicula_id);

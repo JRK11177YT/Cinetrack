@@ -43,7 +43,7 @@ src/main/java/com/cinetrack/
 │                    # PeliculaController, MiListaController,
 │                    # CuentaController, AdminController
 ├── model/           # Usuario, Perfil, Pelicula, Genero,
-│                    # HistorialVisualizacion, MiLista, PerfilGenero
+│                    # MiLista, PerfilGenero
 ├── repository/      # Spring Data JPA interfaces
 ├── service/         # Lógica de negocio
 └── health/          # Health check endpoint
