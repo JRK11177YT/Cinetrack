@@ -21,8 +21,12 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 - **BUG-4**: ProfileInterceptor no verificaba existencia del perfil en BD, solo en sesión
 - **BUG-5**: Contraseña en texto plano almacenada en sesión HTTP durante el registro
 - **BUG-6**: Registro de nuevo usuario podía completarse sin pasar por el paso 1
+- **BUG-7 (encoding)**: Tildes y caracteres especiales (á, é, í, ó, ú, ñ) aparecían como `??` en la aplicación web
+  - `application-dev.properties`: añadidos `characterEncoding=UTF-8&useUnicode=true` al JDBC URL
+  - `database/init.sql`: reimportación con `--default-character-set=utf8mb4` vía redirección nativa (`cmd /c "mysql ... < file"`)
+  - `start.ps1`: importación cambiada de `Get-Content | mysql` (corrompía encoding) a `cmd /c` con redirección de shell nativa
+- `start.ps1`: añadido `D:\basededatos\mysql\bin\mysql.exe` como candidato MySQL, corregido check de BD, añadido `SPRING_PROFILES_ACTIVE=dev` antes del arranque
 - Diagrama de clases UML actualizado con los nuevos métodos de `Genero`
-- `modelo-relacional.md`: campos `director`, `valoracion_imdb` y `novedad` añadidos a la entidad `peliculas`
 
 ### Mejorado
 - Separación de configuración por entorno: `application.properties` (prod) y `application-dev.properties` (dev/XAMPP)
@@ -30,7 +34,12 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 - Clave remember-me externalizada a Spring property `remember.me.key` (antes: variable de entorno directa con fallback hardcodeado)
 - `PeliculaService.obtenerPorGeneros()` optimizado: una sola query `SELECT ... WHERE genero_id IN (...)` en lugar de N queries en bucle
 - Run config de IntelliJ (`CineTrackApplication (XAMPP).run.xml`) con `SPRING_PROFILES_ACTIVE=dev` correcto y duplicado eliminado
+- `database/schema/*.sql` sincronizados con el modelo real de BD: columnas `url_hero`, `director`, `valoracion_imdb`, `novedad` y tabla `historial_visualizacion` con sus FKs e índices
 - Diagramas UML actualizados en `docs/diagrams/clases.md` y `README.md`
+
+### Movido / Reorganizado
+- `docs/er/modelo-relacional.md` → `docs/diagrams/modelo-relacional.md` (incluye campos `director`, `valoracion_imdb`, `url_hero` y `novedad`)
+- `docs/er/justificacion-bd.md` → `docs/notes/justificacion-bd.md`
 
 ---
 
