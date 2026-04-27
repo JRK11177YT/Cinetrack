@@ -327,6 +327,7 @@ Las versiones siguen el formato `MAYOR.MENOR.PARCHE`:
 - **v0.2.0** → Modelo de datos y arquitectura principal
 - **v0.3.0** → Catálogo real de 31 películas
 - **v0.4.0** → Buscador AJAX + sugerencias personalizadas + mejoras UI
+- **v0.5.0** → Hardening de seguridad, separación dev/prod, optimizaciones y 16 tests
 
 ### Disciplina de commits
 Los mensajes de commit siguen la convención **Conventional Commits**:
@@ -446,4 +447,4 @@ está documentada.
 
 ---
 
-*Documento generado: Abril 2026 | CineTrack v0.4.0*
+*Documento generado: Abril 2026 | CineTrack v0.5.0*
