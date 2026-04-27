@@ -52,4 +52,28 @@ public class Genero {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
+    /**
+     * Devuelve el nombre del género en formato CSS (ej: "Ciencia Ficción" -> "ciencia-ficcion")
+     * Muy útil para aplicar clases CSS dinámicas en el frontend.
+     */
+    public String getSlug() {
+        if (this.nombre == null) return "";
+        return this.nombre.toLowerCase()
+                .replace(" ", "-")
+                .replace("á", "a")
+                .replace("é", "e")
+                .replace("í", "i")
+                .replace("ó", "o")
+                .replace("ú", "u")
+                .replaceAll("[^a-z0-9-]", "");
+    }
+
+    @Override
+    public String toString() {
+        return "Genero{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                '}';
+    }
 }

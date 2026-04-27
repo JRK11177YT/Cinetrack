@@ -52,6 +52,8 @@ classDiagram
         -Integer id
         -String nombre
         -String descripcion
+        +getSlug() String
+        +toString() String
     }
 
     class PerfilGenero {
