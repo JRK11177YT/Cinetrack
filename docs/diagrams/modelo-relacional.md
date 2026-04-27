@@ -86,5 +86,3 @@ erDiagram
 | `generos` → `perfil_generos` | 1:N | RESTRICT |
 | `perfiles` → `mi_lista` | 1:N | CASCADE |
 | `peliculas` → `mi_lista` | 1:N | RESTRICT |
-
-> `url_hero` está gestionado por Hibernate (`ddl-auto=update`).
