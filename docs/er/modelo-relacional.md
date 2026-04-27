@@ -38,8 +38,11 @@ erDiagram
         VARCHAR_255 url_imagen
         VARCHAR_255 url_hero
         VARCHAR_255 url_video
+        VARCHAR_150 director
+        DOUBLE valoracion_imdb
         INT genero_id FK
         BOOLEAN destacada
+        BOOLEAN novedad
         DATETIME fecha_creacion
     }
 

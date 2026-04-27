@@ -22,6 +22,9 @@ public interface PeliculaRepository extends JpaRepository<Pelicula, Integer> {
     // SELECT * FROM peliculas WHERE novedad = true
     List<Pelicula> findByNovedadTrue();
 
+    // SELECT * FROM peliculas WHERE genero_id IN (...) — una sola query para multiples generos
+    List<Pelicula> findByGeneroIdIn(List<Integer> generoIds);
+
     // SELECT COUNT(*) FROM peliculas
     long count();
 

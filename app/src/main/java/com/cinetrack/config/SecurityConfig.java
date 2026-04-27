@@ -1,5 +1,6 @@
 package com.cinetrack.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +13,10 @@ import org.springframework.web.multipart.support.MultipartFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    // Leída desde Spring properties: application-dev.properties (dev) o variable de entorno REMEMBER_ME_KEY (prod)
+    @Value("${remember.me.key:}")
+    private String rememberMeKey;
 
     /**
      * Registrar MultipartFilter ANTES del filtro de seguridad.
@@ -48,7 +53,9 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID", "remember-me")
                 )
                 .rememberMe(remember -> remember
-                        .key(System.getenv().getOrDefault("REMEMBER_ME_KEY", "cinetrack-remember-key"))
+                        // En dev: remember.me.key de application-dev.properties
+                        // En prod: variable de entorno REMEMBER_ME_KEY (fallback: UUID aleatorio por seguridad)
+                        .key(rememberMeKey.isBlank() ? "cinetrack-" + java.util.UUID.randomUUID() : rememberMeKey)
                         .tokenValiditySeconds(7 * 24 * 60 * 60)
                         .rememberMeParameter("recuerdame")
                 );

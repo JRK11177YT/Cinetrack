@@ -4,6 +4,36 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 
 ---
 
+## [0.5.0] — 2026-04-27
+
+### Añadido
+- Método `getSlug()` en entidad `Genero`: transforma el nombre a formato CSS/URL (ej. "Ciencia Ficción" → "ciencia-ficcion")
+- Método `toString()` en entidad `Genero`: mejora el logging y la depuración
+- Tests unitarios de `UsuarioService` con Mockito: registro con BCrypt, búsqueda por email, conteo
+- Tests unitarios de `MiListaService` con Mockito: añadir, duplicados, eliminar, existencia
+- Memoria técnica completa del proyecto (`docs/memoria-tecnica.md`)
+- Vídeos de muestra incluidos en el repositorio para portabilidad (`app/uploads/peliculas/videos/`)
+
+### Corregido
+- **BUG-1**: Subida de archivos en admin validaba solo extensión, no Content-Type real (vector de ataque)
+- **BUG-2**: Límite de perfiles por plan no se verificaba en backend, solo en UI
+- **BUG-3**: Eliminar película de Mi Lista vía AJAX no quitaba la tarjeta del DOM
+- **BUG-4**: ProfileInterceptor no verificaba existencia del perfil en BD, solo en sesión
+- **BUG-5**: Contraseña en texto plano almacenada en sesión HTTP durante el registro
+- **BUG-6**: Registro de nuevo usuario podía completarse sin pasar por el paso 1
+- Diagrama de clases UML actualizado con los nuevos métodos de `Genero`
+- `modelo-relacional.md`: campos `director`, `valoracion_imdb` y `novedad` añadidos a la entidad `peliculas`
+
+### Mejorado
+- Separación de configuración por entorno: `application.properties` (prod) y `application-dev.properties` (dev/XAMPP)
+- `ddl-auto=validate` en producción para evitar modificaciones no controladas del esquema
+- Clave remember-me externalizada a Spring property `remember.me.key` (antes: variable de entorno directa con fallback hardcodeado)
+- `PeliculaService.obtenerPorGeneros()` optimizado: una sola query `SELECT ... WHERE genero_id IN (...)` en lugar de N queries en bucle
+- Run config de IntelliJ (`CineTrackApplication (XAMPP).run.xml`) con `SPRING_PROFILES_ACTIVE=dev` correcto y duplicado eliminado
+- Diagramas UML actualizados en `docs/diagrams/clases.md` y `README.md`
+
+---
+
 ## [0.4.0] — 2026-04-15
 
 ### Añadido
