@@ -69,6 +69,8 @@ public class AuthController {
                                    @RequestParam String password,
                                    @RequestParam String passwordConfirm,
                                    HttpSession session,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response,
                                    RedirectAttributes redirect) {
         if (!password.equals(passwordConfirm)) {
             redirect.addFlashAttribute("error", "Las contraseñas no coinciden");
@@ -80,39 +82,11 @@ public class AuthController {
             return "redirect:/registro";
         }
 
-        session.setAttribute("registroEmail", email);
-        session.setAttribute("registroPassword", password);
-        return "redirect:/registro/plan";
-    }
+        // BUG 5 FIX: registrar usuario inmediatamente con plan por defecto.
+        // Nunca se almacena la contraseña en texto plano en la sesión HTTP.
+        Usuario usuario = usuarioService.registrar(email, password, "BASICO");
 
-    @GetMapping("/registro/plan")
-    public String planForm(HttpSession session) {
-        if (session.getAttribute("registroEmail") == null) {
-            return "redirect:/registro";
-        }
-        return "auth/plan";
-    }
-
-    @PostMapping("/registro/plan")
-    public String planProcesar(@RequestParam String plan,
-                               HttpSession session,
-                               HttpServletRequest request,
-                               HttpServletResponse response,
-                               RedirectAttributes redirect) {
-        String email = (String) session.getAttribute("registroEmail");
-        String password = (String) session.getAttribute("registroPassword");
-
-        if (email == null || password == null) {
-            return "redirect:/registro";
-        }
-
-        Usuario usuario = usuarioService.registrar(email, password, plan);
-
-        // Limpiar datos temporales de sesión
-        session.removeAttribute("registroEmail");
-        session.removeAttribute("registroPassword");
-
-        // Auto-login después de registrarse — guardar contexto explícitamente (Spring Security 6)
+        // Auto-login tras el registro para proteger el resto del flujo
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 usuario.getEmail(), null,
                 List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol()))
@@ -121,6 +95,40 @@ public class AuthController {
         context.setAuthentication(authToken);
         SecurityContextHolder.setContext(context);
         new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+
+        return "redirect:/registro/plan";
+    }
+
+    @GetMapping("/registro/plan")
+    public String planForm() {
+        // Si no está autenticado (acceso directo sin registro), redirigir
+        String principal = SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : null;
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return "redirect:/registro";
+        }
+        return "auth/plan";
+    }
+
+    @PostMapping("/registro/plan")
+    public String planProcesar(@RequestParam String plan,
+                               RedirectAttributes redirect) {
+        // BUG 5 FIX: el usuario ya está autenticado; no se toca la sesión con credenciales
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioService.buscarPorEmail(email).orElse(null);
+        if (usuario == null) {
+            return "redirect:/registro";
+        }
+
+        List<String> planesValidos = List.of("BASICO", "ESTANDAR", "PREMIUM");
+        if (!planesValidos.contains(plan)) {
+            redirect.addFlashAttribute("error", "Plan no válido");
+            return "redirect:/registro/plan";
+        }
+
+        usuario.setPlan(plan);
+        usuarioService.guardar(usuario);
 
         return "redirect:/registro/perfil";
     }
@@ -137,9 +145,18 @@ public class AuthController {
                                       @RequestParam(required = false) String avatar,
                                       @RequestParam(required = false) MultipartFile avatarFile,
                                       @RequestParam(required = false) List<Integer> generoIds,
-                                      HttpSession session) throws IOException {
+                                      HttpSession session,
+                                      RedirectAttributes redirect) throws IOException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Usuario usuario = usuarioService.buscarPorEmail(email).orElseThrow();
+
+        // BUG 2 FIX: verificar límite de perfiles por plan antes de crear
+        long perfilesActuales = perfilService.contarPerfilesPorUsuario(usuario.getId());
+        if (perfilesActuales >= usuario.getMaxPerfiles()) {
+            redirect.addFlashAttribute("error",
+                    "Has alcanzado el límite de perfiles de tu plan (" + usuario.getMaxPerfiles() + ")");
+            return "redirect:/perfiles";
+        }
 
         String avatarUrl = (avatar != null && !avatar.isBlank()) ? avatar : "initial";
         if (avatarFile != null && !avatarFile.isEmpty()) {

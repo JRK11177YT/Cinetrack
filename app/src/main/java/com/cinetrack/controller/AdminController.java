@@ -363,6 +363,24 @@ public class AdminController {
         log.info("guardarArchivo: name={}, contentType={}, size={}, subfolder={}",
                 file.getOriginalFilename(), file.getContentType(), file.getSize(), subfolder);
 
+        // BUG 1 FIX: validar tipo de contenido contra los prefijos permitidos
+        String contentType = file.getContentType();
+        if (contentType == null) {
+            log.warn("Tipo de archivo desconocido (contentType null)");
+            return null;
+        }
+        boolean tipoPermitido = false;
+        for (String prefix : allowedPrefixes) {
+            if (contentType.startsWith(prefix)) {
+                tipoPermitido = true;
+                break;
+            }
+        }
+        if (!tipoPermitido) {
+            log.warn("Tipo de archivo no permitido: {}", contentType);
+            return null;
+        }
+
         if (file.getSize() > maxBytes) {
             log.warn("Archivo demasiado grande: {} > {} bytes", file.getSize(), maxBytes);
             return null;

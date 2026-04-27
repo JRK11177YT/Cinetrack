@@ -307,17 +307,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const response = await fetch(url, { method, headers });
                 if (response.ok) {
-                    btn.classList.toggle('active');
-                    const icon = btn.querySelector('i');
-                    if (icon) {
-                        icon.className = btn.classList.contains('active')
-                            ? 'fas fa-check'
-                            : 'fas fa-plus';
+                    if (isInList) {
+                        // BUG 3 FIX: si estamos en la página Mi Lista, eliminar la tarjeta del DOM
+                        const card = btn.closest('.movie-card');
+                        if (card && card.closest('.movies-grid')) {
+                            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.9)';
+                            setTimeout(() => {
+                                card.remove();
+                                // Si no quedan tarjetas, mostrar estado vacío recargando
+                                const grid = document.querySelector('.movies-grid');
+                                if (grid && grid.querySelectorAll('.movie-card').length === 0) {
+                                    window.location.reload();
+                                }
+                            }, 300);
+                        } else {
+                            // En otras páginas solo cambiar el icono
+                            btn.classList.remove('active');
+                            const icon = btn.querySelector('i');
+                            if (icon) icon.className = 'fas fa-plus';
+                            btn.style.transform = 'scale(1.3)';
+                            setTimeout(() => { btn.style.transform = ''; }, 200);
+                        }
+                    } else {
+                        btn.classList.add('active');
+                        const icon = btn.querySelector('i');
+                        if (icon) icon.className = 'fas fa-check';
+                        btn.style.transform = 'scale(1.3)';
+                        setTimeout(() => { btn.style.transform = ''; }, 200);
                     }
-
-                    // Micro-animation feedback
-                    btn.style.transform = 'scale(1.3)';
-                    setTimeout(() => { btn.style.transform = ''; }, 200);
                 }
             } catch (error) {
                 console.error('Error al actualizar Mi Lista:', error);
