@@ -3,13 +3,13 @@
 -- =============================================
 -- Géneros cinematográficos
 -- =============================================
-INSERT INTO generos (nombre, descripcion) VALUES
-('Acción', 'Películas con ritmo intenso, enfrentamientos y secuencias dinámicas'),
-('Drama', 'Historias centradas en conflictos emocionales y desarrollo de personajes'),
-('Ciencia Ficción', 'Películas con tecnología avanzada, futuro o elementos imaginarios'),
-('Comedia', 'Películas orientadas al humor y al entretenimiento'),
-('Thriller', 'Historias de tensión, suspense e intriga'),
-('Aventura', 'Películas centradas en exploración, viajes y desafíos');
+INSERT INTO generos (id, nombre, descripcion) VALUES
+(1, 'Acción',          'Películas con ritmo intenso, enfrentamientos y secuencias dinámicas'),
+(2, 'Drama',           'Historias centradas en conflictos emocionales y desarrollo de personajes'),
+(3, 'Ciencia Ficción', 'Películas con tecnología avanzada, futuro o elementos imaginarios'),
+(4, 'Comedia',         'Películas orientadas al humor y al entretenimiento'),
+(5, 'Thriller',        'Historias de tensión, suspense e intriga'),
+(6, 'Aventura',        'Películas centradas en exploración, viajes y desafíos');
 
 
 -- =============================================

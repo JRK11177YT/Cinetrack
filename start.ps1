@@ -27,6 +27,7 @@ try { $mysqlExe = (Get-Command "mysql" -ErrorAction SilentlyContinue).Source } c
 
 if (-not $mysqlExe) {
     $candidates = @(
+        "D:\basededatos\mysql\bin\mysql.exe",
         "C:\xampp\mysql\bin\mysql.exe",
         "C:\xampp8\mysql\bin\mysql.exe",
         "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe",
@@ -46,14 +47,14 @@ if (-not $mysqlExe) {
 # ------------------------------------------------------------------
 # 2. Verificar que MySQL esta accesible
 # ------------------------------------------------------------------
-Write-Host "[1/3] Comprobando conexion a MySQL ($DbHost`:$DbPort)..." -ForegroundColor Yellow
+Write-Host "[1/3] Comprobando conexion a MySQL ($DbHost : $DbPort)..." -ForegroundColor Yellow
 
 $mysqlArgs = @("-h", $DbHost, "-P", $DbPort, "-u", $DbUser, "--connect-timeout=5")
 if ($DbPassword -ne "") { $mysqlArgs += "-p$DbPassword" }
 $mysqlArgs += @("-e", "SELECT 1;")
 
 try {
-    & $mysqlExe @mysqlArgs 2>&1 | Out-Null
+    & "$mysqlExe" @mysqlArgs 2>&1 | Out-Null
     if ($LASTEXITCODE -ne 0) { throw }
     Write-Host "  MySQL accesible." -ForegroundColor Green
 } catch {
@@ -71,11 +72,11 @@ Write-Host "[2/3] Verificando base de datos 'cinetrack_db'..." -ForegroundColor 
 
 $checkArgs = @("-h", $DbHost, "-P", $DbPort, "-u", $DbUser)
 if ($DbPassword -ne "") { $checkArgs += "-p$DbPassword" }
-$checkArgs += @("-e", "SHOW DATABASES LIKE 'cinetrack_db';")
+$checkArgs += @("cinetrack_db", "-e", "SELECT COUNT(*) FROM peliculas;")
 
-$dbExists = & $mysqlExe @checkArgs 2>&1 | Select-String "cinetrack_db"
+$dbCheck = & "$mysqlExe" @checkArgs 2>&1
 
-if ($dbExists) {
+if ($LASTEXITCODE -eq 0) {
     Write-Host "  Base de datos ya existe. Saltando inicializacion." -ForegroundColor Green
 } else {
     Write-Host "  Base de datos no encontrada. Inicializando..." -ForegroundColor Yellow
@@ -84,9 +85,15 @@ if ($dbExists) {
         Write-Host "ERROR: No se encontro database\init.sql" -ForegroundColor Red
         exit 1
     }
-    $importArgs = @("-h", $DbHost, "-P", $DbPort, "-u", $DbUser)
-    if ($DbPassword -ne "") { $importArgs += "-p$DbPassword" }
-    Get-Content $initSql | & $mysqlExe @importArgs
+    # Usamos cmd /c con redireccion nativa para preservar UTF-8.
+    # Get-Content | mysql corrompe tildes y caracteres especiales.
+    $passArg = if ($DbPassword -ne "") { "-p$DbPassword" } else { "" }
+    $cmdLine = if ($passArg) {
+        "`"$mysqlExe`" -h $DbHost -P $DbPort -u $DbUser $passArg --default-character-set=utf8mb4 < `"$initSql`""
+    } else {
+        "`"$mysqlExe`" -h $DbHost -P $DbPort -u $DbUser --default-character-set=utf8mb4 < `"$initSql`""
+    }
+    cmd /c $cmdLine
     if ($LASTEXITCODE -ne 0) {
         Write-Host "ERROR al inicializar la base de datos." -ForegroundColor Red
         exit 1
@@ -108,9 +115,6 @@ Write-Host ""
 $appDir = Join-Path $PSScriptRoot "app"
 Set-Location $appDir
 
-$env:DB_HOST     = $DbHost
-$env:DB_PORT     = $DbPort
-$env:DB_USERNAME = $DbUser
-$env:DB_PASSWORD = $DbPassword
+$env:SPRING_PROFILES_ACTIVE = "dev"
 
 & ".\mvnw.cmd" spring-boot:run

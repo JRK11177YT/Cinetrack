@@ -44,16 +44,20 @@ CREATE TABLE generos (
 -- Tabla: peliculas
 -- =============================================
 CREATE TABLE peliculas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titulo VARCHAR(150) NOT NULL,
-    descripcion TEXT NOT NULL,
-    duracion INT NOT NULL,
-    anio INT NOT NULL,
-    url_imagen VARCHAR(255),
-    url_video VARCHAR(255),
-    genero_id INT NOT NULL,
-    destacada BOOLEAN NOT NULL DEFAULT FALSE,
-    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    titulo          VARCHAR(150) NOT NULL,
+    descripcion     TEXT NOT NULL,
+    duracion        INT NOT NULL,
+    anio            INT NOT NULL,
+    url_imagen      VARCHAR(255),
+    url_video       VARCHAR(255),
+    url_hero        VARCHAR(255),
+    director        VARCHAR(150),
+    valoracion_imdb DOUBLE,
+    genero_id       INT NOT NULL,
+    destacada       BOOLEAN NOT NULL DEFAULT FALSE,
+    novedad         BIT(1) NOT NULL DEFAULT b'0',
+    fecha_creacion  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -61,7 +65,7 @@ CREATE TABLE peliculas (
 -- Tabla: perfil_generos (Preferencias de género por perfil)
 -- =============================================
 CREATE TABLE perfil_generos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id        INT AUTO_INCREMENT PRIMARY KEY,
     perfil_id INT NOT NULL,
     genero_id INT NOT NULL
 );
@@ -71,8 +75,22 @@ CREATE TABLE perfil_generos (
 -- Tabla: mi_lista (Películas guardadas por perfil)
 -- =============================================
 CREATE TABLE mi_lista (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    perfil_id INT NOT NULL,
-    pelicula_id INT NOT NULL,
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    perfil_id      INT NOT NULL,
+    pelicula_id    INT NOT NULL,
     fecha_agregado DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- =============================================
+-- Tabla: historial_visualizacion
+-- Progreso de reproducción por perfil.
+-- =============================================
+CREATE TABLE historial_visualizacion (
+    id                         INT AUTO_INCREMENT PRIMARY KEY,
+    perfil_id                  INT NOT NULL,
+    pelicula_id                INT NOT NULL,
+    fecha_ultima_visualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    progreso_segundos          INT NOT NULL DEFAULT 0,
+    completada                 BOOLEAN NOT NULL DEFAULT FALSE
 );
