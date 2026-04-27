@@ -65,66 +65,26 @@ cinetrack/
 └── README.md
 ```
 
-## Puesta en marcha desde cero (clon fresco)
+## Ejecución local
 
-### Opción A — Script automático (recomendado para Windows + XAMPP)
+1. **Inicializar la base de datos**
+   - Abrir XAMPP → iniciar MySQL
+   - Ejecutar `database/init.sql` en MySQL Workbench o desde la terminal:
+     ```bash
+     mysql -u root < database/init.sql
+     ```
 
-1. Iniciar MySQL en XAMPP (panel de control → Start MySQL)
-2. Ejecutar el script de inicialización desde la raíz del proyecto:
-   ```powershell
-   .\scripts\setup-db.ps1
-   # Si tienes contraseña en MySQL:
-   .\scripts\setup-db.ps1 -Password "tupassword"
-   ```
-3. Arrancar la aplicación:
-   ```powershell
-   cd app
-   .\mvnw.cmd spring-boot:run
-   ```
-4. Acceder a `http://localhost:8080`
+2. **Revisar credenciales** en `app/src/main/resources/application.properties`
 
-El script crea la base de datos `cinetrack_db`, carga toda la estructura y los datos de prueba (31 películas, 6 géneros). El usuario administrador se crea automáticamente al arrancar la app.
+3. **Arrancar la aplicación** desde la carpeta `app/`:
+   - Windows: `mvnw.cmd spring-boot:run`
+   - Linux/Mac: `./mvnw spring-boot:run`
 
-### Opción B — Manual (MySQL CLI)
+4. **Acceder**
+   - `http://localhost:8080`
+   - Panel admin: `http://localhost:8080/admin`
 
-```bash
-mysql -u root < database/init.sql
-cd app && ./mvnw spring-boot:run
-```
-
-### Opción C — Linux (VirtualBox / Ubuntu / macOS)
-
-1. Instalar dependencias:
-   ```bash
-   sudo apt update
-   sudo apt install -y openjdk-17-jdk mysql-server git
-   sudo systemctl start mysql
-   ```
-2. Clonar el repositorio y ejecutar el script de inicialización:
-   ```bash
-   git clone https://github.com/JRK11177YT/Cinetrack.git cinetrack
-   cd cinetrack
-   bash scripts/setup-db.sh
-   ```
-3. Arrancar la aplicación:
-   ```bash
-   cd app
-   chmod +x mvnw
-   ./mvnw spring-boot:run
-   ```
-4. Acceder a `http://localhost:8080`
-
----
-
-**Credenciales por defecto:**
-- Admin: `admin@cinetrack.com` / `admin123`
-- Panel de administración: `http://localhost:8080/admin`
-
-## Credenciales de acceso
-
-| Rol | Email | Contraseña |
-|---|---|---|
-| Administrador | admin@cinetrack.com | admin123 |
+**Credenciales por defecto:** `admin@cinetrack.com` / `admin123`
 
 ## Documentación técnica y diagramas
 
