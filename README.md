@@ -3,16 +3,17 @@
 > Plataforma web de streaming de películas inspirada en Netflix.  
 > Proyecto transversal final DAW/DAM.
 
-![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow)
-![Versión](https://img.shields.io/badge/versión-v0.4.0--dev-blue)
+![Estado](https://img.shields.io/badge/estado-estable-brightgreen)
+![Versión](https://img.shields.io/badge/versión-v0.5.0-blue)
+![Tests](https://img.shields.io/badge/tests-16%20passing-brightgreen)
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen)
 
 ---
 
-## Estado actual — v0.4.0-dev
+## Estado actual — v0.5.0
 
-El núcleo funcional está completamente operativo. La aplicación arranca, se conecta a la base de datos y todas las funcionalidades principales funcionan end-to-end. Se siguen añadiendo mejoras de UX y funcionalidades.
+Aplicación completa y estable. 16 tests automatizados con 0 fallos. Arquitectura hardened con separación de entornos dev/prod, seguridad multicapa y documentación técnica completa.
 
 ## Stack tecnológico
 
