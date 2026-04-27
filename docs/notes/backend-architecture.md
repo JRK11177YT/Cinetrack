@@ -70,9 +70,6 @@ Representa el contenido principal de la plataforma.
 
 Representa los gustos o preferencias del usuario.
 
-### HistorialVisualizacion
-
-Representa el progreso de visualización de una película por parte de un usuario y sirve como base para la funcionalidad de “seguir viendo”.
 
 ### MiLista
 
@@ -130,7 +127,6 @@ Se implementará la entidad Usuario y la lógica básica asociada:
 Se implementarán las funcionalidades asociadas al comportamiento del usuario:
 
 * MiLista
-* HistorialVisualizacion
 * UsuarioGenero
 
 ### Fase 4 — Refinamiento

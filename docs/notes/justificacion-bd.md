@@ -55,7 +55,6 @@ El diseño permite añadir en el futuro nuevas tablas como:
 * valoraciones
 * comentarios
 * recomendaciones automáticas
-* historial de visualización (cuando se implemente el reproductor)
 * listas personalizadas
 
 Esto convierte la base de datos en una estructura modular y extensible, adecuada para el crecimiento progresivo del proyecto.

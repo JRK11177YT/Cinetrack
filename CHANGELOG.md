@@ -34,7 +34,7 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 - Clave remember-me externalizada a Spring property `remember.me.key` (antes: variable de entorno directa con fallback hardcodeado)
 - `PeliculaService.obtenerPorGeneros()` optimizado: una sola query `SELECT ... WHERE genero_id IN (...)` en lugar de N queries en bucle
 - Run config de IntelliJ (`CineTrackApplication (XAMPP).run.xml`) con `SPRING_PROFILES_ACTIVE=dev` correcto y duplicado eliminado
-- `database/schema/*.sql` sincronizados con el modelo real de BD: columnas `url_hero`, `director`, `valoracion_imdb`, `novedad` y tabla `historial_visualizacion` con sus FKs e índices
+- `database/schema/*.sql` sincronizados con el modelo real de BD: columnas `url_hero`, `director`, `valoracion_imdb` y `novedad`
 - Diagramas UML actualizados en `docs/diagrams/clases.md` y `README.md`
 
 ### Movido / Reorganizado
@@ -98,7 +98,6 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 - Panel de administración: CRUD películas, géneros y usuarios
 - Subida de archivos: posters, vídeos y avatares con validación de tipo y tamaño
 - Cartelera de inicio: carousel de novedades + filas por género
-- Historial de visualización y sección "Continuar viendo"
 - Mi Lista: watchlist por perfil con respuesta AJAX
 - Flujo de registro completo: email → plan → perfil → login automático
 - Página de detalle de película

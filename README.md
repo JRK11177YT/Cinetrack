@@ -11,6 +11,12 @@
 
 ---
 
+## Demo en vídeo
+
+[![CineTrack Demo](https://img.youtube.com/vi/xufnprDRgG0/maxresdefault.jpg)](https://youtu.be/xufnprDRgG0)
+
+---
+
 ## Estado actual — v0.5.0
 
 Aplicación completa y estable. 16 tests automatizados con 0 fallos. Arquitectura hardened con separación de entornos dev/prod, seguridad multicapa y documentación técnica completa.

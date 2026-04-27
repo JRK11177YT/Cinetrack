@@ -82,15 +82,3 @@ CREATE TABLE mi_lista (
 );
 
 
--- =============================================
--- Tabla: historial_visualizacion
--- Progreso de reproducción por perfil.
--- =============================================
-CREATE TABLE historial_visualizacion (
-    id                         INT AUTO_INCREMENT PRIMARY KEY,
-    perfil_id                  INT NOT NULL,
-    pelicula_id                INT NOT NULL,
-    fecha_ultima_visualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    progreso_segundos          INT NOT NULL DEFAULT 0,
-    completada                 BOOLEAN NOT NULL DEFAULT FALSE
-);
