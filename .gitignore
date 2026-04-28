@@ -15,6 +15,7 @@ build/
 
 # Environment
 .env
+app/src/main/resources/application-dev.properties
 
 # Logs
 *.log

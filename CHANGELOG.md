@@ -4,6 +4,25 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 
 ---
 
+## [0.5.2] — 2026-04-28
+
+### Seguridad
+- Usuario dedicado `cinetrack_user` en MySQL: la aplicación ya no se conecta como `root`
+- `cinetrack_user` tiene privilegios exclusivamente sobre `cinetrack_db`
+- `application-dev.properties` excluido de git (`.gitignore`) para no exponer credenciales
+- `application-dev.properties.example` añadido como plantilla para nuevas instalaciones
+
+### Añadido
+- Script `scripts/setup-db.ps1`: inicialización completa de BD en Windows/XAMPP con un solo comando
+- Script `scripts/setup-db.sh` actualizado: refleja las nuevas credenciales y mensaje de éxito mejorado
+- `database/init.sql` crea automáticamente `cinetrack_user` con `GRANT` mínimo durante la inicialización
+
+### Corregido
+- Tablas `global_priv` y `db` de MySQL reparadas (corrupción por cierre forzado de XAMPP)
+- Permisos del usuario `pma` de phpMyAdmin restaurados para que la página de privilegios funcione
+
+---
+
 ## [0.5.0] — 2026-04-27
 
 ### Añadido

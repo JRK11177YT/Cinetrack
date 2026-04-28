@@ -7,6 +7,11 @@
 #   bash scripts/setup-db.sh
 #   bash scripts/setup-db.sh --password "tupassword"
 #   bash scripts/setup-db.sh --host 127.0.0.1 --port 3306 --user root --password ""
+#
+# Lo que hace este script:
+#   1. Crea la base de datos  cinetrack_db
+#   2. Crea el usuario dedicado  cinetrack_user / Cinetrack2024!
+#   3. Carga toda la estructura y los datos de ejemplo
 # =============================================================
 
 MYSQL_HOST="127.0.0.1"
@@ -63,13 +68,19 @@ fi
 echo "Creando base de datos y cargando datos..."
 if mysql $MYSQL_ARGS < "$INIT_SQL"; then
     echo ""
-    echo "Base de datos 'cinetrack_db' creada e inicializada correctamente."
+    echo "===================================================="
+    echo "  Inicializacion completada correctamente."
+    echo "===================================================="
     echo ""
-    echo "Próximos pasos:"
+    echo "  Base de datos : cinetrack_db"
+    echo "  Usuario BD    : cinetrack_user"
+    echo "  Password BD   : Cinetrack2024!"
+    echo ""
+    echo "Proximos pasos:"
     echo "  1. cd app"
     echo "  2. ./mvnw spring-boot:run"
     echo "  3. Abre http://localhost:8080"
-    echo "  4. Login: admin@cinetrack.com / admin123"
+    echo "  4. Login admin: admin@cinetrack.com / admin123"
     echo ""
 else
     echo ""

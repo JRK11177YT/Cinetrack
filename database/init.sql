@@ -20,6 +20,17 @@ CREATE DATABASE IF NOT EXISTS cinetrack_db
 
 USE cinetrack_db;
 
+-- =============================================
+-- USUARIO DEDICADO CINETRACK
+-- Se crea con localhost Y 127.0.0.1 para cubrir
+-- ambas resoluciones en Windows con XAMPP.
+-- =============================================
+CREATE USER IF NOT EXISTS 'cinetrack_user'@'localhost'  IDENTIFIED BY 'Cinetrack2024!';
+CREATE USER IF NOT EXISTS 'cinetrack_user'@'127.0.0.1' IDENTIFIED BY 'Cinetrack2024!';
+GRANT ALL PRIVILEGES ON cinetrack_db.* TO 'cinetrack_user'@'localhost';
+GRANT ALL PRIVILEGES ON cinetrack_db.* TO 'cinetrack_user'@'127.0.0.1';
+FLUSH PRIVILEGES;
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- =============================================
