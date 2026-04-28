@@ -9,9 +9,8 @@
 #   bash scripts/setup-db.sh --host 127.0.0.1 --port 3306 --user root --password ""
 #
 # Lo que hace este script:
-#   1. Crea la base de datos  cinetrack_db
-#   2. Crea el usuario dedicado  cinetrack_user / Cinetrack2024!
-#   3. Carga toda la estructura y los datos de ejemplo
+#   1. Crea la BD y el usuario  (database/init.sql)
+#   2. Carga géneros y películas (database/data.sql)
 # =============================================================
 
 MYSQL_HOST="127.0.0.1"
@@ -48,14 +47,20 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 INIT_SQL="$PROJECT_ROOT/database/init.sql"
+DATA_SQL="$PROJECT_ROOT/database/data.sql"
 
 if [ ! -f "$INIT_SQL" ]; then
     echo "ERROR: No se encontró database/init.sql en $PROJECT_ROOT"
     exit 1
 fi
+if [ ! -f "$DATA_SQL" ]; then
+    echo "ERROR: No se encontró database/data.sql en $PROJECT_ROOT"
+    exit 1
+fi
 
-echo "MySQL: $(command -v mysql)"
-echo "Script SQL: $INIT_SQL"
+echo "MySQL   : $(command -v mysql)"
+echo "Esquema : $INIT_SQL"
+echo "Datos   : $DATA_SQL"
 echo ""
 
 # Construir argumentos de conexión
@@ -64,9 +69,17 @@ if [ -n "$MYSQL_PASSWORD" ]; then
     MYSQL_ARGS="$MYSQL_ARGS -p$MYSQL_PASSWORD"
 fi
 
-# Ejecutar el script
-echo "Creando base de datos y cargando datos..."
-if mysql $MYSQL_ARGS < "$INIT_SQL"; then
+# Ejecutar esquema
+echo "[1/2] Creando esquema, BD y usuario..."
+if ! mysql $MYSQL_ARGS < "$INIT_SQL"; then
+    echo ""
+    echo "ERROR al ejecutar init.sql. Abortando."
+    exit 1
+fi
+
+# Ejecutar datos
+echo "[2/2] Cargando datos de ejemplo..."
+if mysql $MYSQL_ARGS < "$DATA_SQL"; then
     echo ""
     echo "===================================================="
     echo "  Inicializacion completada correctamente."

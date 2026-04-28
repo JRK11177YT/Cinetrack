@@ -12,9 +12,8 @@
 #   - mysql.exe en el PATH  o  XAMPP instalado en C:\xampp
 #
 # Lo que hace este script:
-#   1. Crea la base de datos  cinetrack_db
-#   2. Crea el usuario dedicado  cinetrack_user / Cinetrack2024!
-#   3. Carga toda la estructura y los datos de ejemplo
+#   1. Crea la BD y el usuario  (database/init.sql)
+#   2. Carga géneros y películas (database/data.sql)
 # =============================================================
 
 param(
@@ -48,30 +47,42 @@ if (-not $mysql) {
 
 Write-Host "MySQL: $mysql"
 
-# ── Localizar init.sql ───────────────────────────────────────
+# ── Localizar scripts SQL ────────────────────────────────────
 $scriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $scriptDir
 $initSql     = Join-Path $projectRoot "database\init.sql"
+$dataSql     = Join-Path $projectRoot "database\data.sql"
 
 if (-not (Test-Path $initSql)) {
     Write-Host "ERROR: No se encontro database\init.sql en $projectRoot"
     exit 1
 }
+if (-not (Test-Path $dataSql)) {
+    Write-Host "ERROR: No se encontro database\data.sql en $projectRoot"
+    exit 1
+}
 
-Write-Host "Script SQL: $initSql"
+Write-Host "Esquema : $initSql"
+Write-Host "Datos   : $dataSql"
 Write-Host ""
 
 # ── Construir argumentos de conexion ────────────────────────
-$args = @("-h", $MySQLHost, "-P", $Port, "-u", $RootUser)
+$mysqlArgs = @("-h", $MySQLHost, "-P", $Port, "-u", $RootUser)
 if ($RootPassword -ne "") {
-    $args += "-p$RootPassword"
+    $mysqlArgs += "-p$RootPassword"
 }
 
 # ── Ejecutar ─────────────────────────────────────────────────
-Write-Host "Creando base de datos, usuario y cargando datos..."
-Write-Host ""
+Write-Host "[1/2] Creando esquema, BD y usuario..."
+Get-Content $initSql -Raw | & $mysql @mysqlArgs
+if ($LASTEXITCODE -ne 0) {
+    Write-Host ""
+    Write-Host "ERROR al ejecutar init.sql. Abortando."
+    exit 1
+}
 
-Get-Content $initSql -Raw | & $mysql @args
+Write-Host "[2/2] Cargando datos de ejemplo..."
+Get-Content $dataSql -Raw | & $mysql @mysqlArgs
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""

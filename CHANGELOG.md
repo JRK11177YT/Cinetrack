@@ -4,6 +4,16 @@ Historial de versiones del proyecto. Sigue el formato [Keep a Changelog](https:/
 
 ---
 
+## [0.5.4] — 2026-04-28
+
+### Reorganizado
+- `database/init.sql` separado en dos ficheros con responsabilidad única:
+  - `database/init.sql` — solo esquema: BD, usuario, tablas, índices y claves foráneas. Sin datos
+  - `database/data.sql` — seeds: géneros (6) y películas (31)
+- Scripts `setup-db.ps1` y `setup-db.sh` actualizados para ejecutar ambos ficheros en orden (primero esquema, luego datos)
+
+---
+
 ## [0.5.2] — 2026-04-28
 
 ### Seguridad
